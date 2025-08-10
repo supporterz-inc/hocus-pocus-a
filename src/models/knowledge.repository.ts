@@ -11,6 +11,7 @@ async function getAll(): Promise<Knowledge[]> {
 }
 
 async function upsert(knowledge: Knowledge): Promise<void> {
+  console.log(knowledge);
   await writeFile(`./storage/${knowledge.knowledgeId}.json`, JSON.stringify(knowledge, null, 2));
 }
 
