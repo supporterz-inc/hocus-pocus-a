@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { getAllKnowledgesController } from './controllers/get-all-knowledges.controller.js';
+import { postKnowledgeController } from './controllers/post-knowledge.controller.js';
 
 interface Variables {
   userId: string;
@@ -13,3 +14,5 @@ router.get('/', (ctx) => {
 
   return ctx.html(getAllKnowledgesController());
 });
+
+router.post('/knowledges', postKnowledgeController);
