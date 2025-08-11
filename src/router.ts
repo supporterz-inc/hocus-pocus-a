@@ -1,7 +1,9 @@
 import { type Context, Hono } from 'hono';
 import { deleteKnowledgeController } from './controllers/delete-knowledge.controller.js';
 import { getAllKnowledgesController } from './controllers/get-all-knowledges.controller.js';
+import { getEditKnowledgePageController } from './controllers/get-edit-knowledge-page.controller.js';
 import { getNewKnowledgePageController } from './controllers/get-new-knowledge-page.controller.js';
+import { patchKnowledgeController } from './controllers/patch-knowledge.controller.js';
 import { postKnowledgeController } from './controllers/post-knowledge.controller.js';
 
 interface Variables {
@@ -23,10 +25,16 @@ router.get('/articles', (c) => {
   return c.html(getNewKnowledgePageController());
 });
 
+router.get('/knowledges/:knowledgeId/edit', getEditKnowledgePageController);
+
 router.post('/articles', async (c) => {
   return await postKnowledgeController(c);
 });
 router.post('/knowledges', postKnowledgeController);
+
+router.post('/knowledges/:knowledgeId', async (c) => {
+  return await patchKnowledgeController(c);
+});
 
 router.post('/knowledges/:knowledgeId/delete', async (c) => {
   return await deleteKnowledgeController(c);
