@@ -24,6 +24,18 @@ export function KnowledgeListFeature({ knowledges }: Props) {
                 <p class="text-sm text-black-800">{knowledge.content}</p>
                 <p class="mt-1 text-gray-400">作成者: {knowledge.authorId}</p>
                 <p class="mt-1 text-gray-400">作成日時: {new Date(knowledge.createdAt * 1000).toLocaleString()}</p>
+                <form
+                  action={`/knowledges/${knowledge.knowledgeId}/delete`}
+                  method="post"
+                  onsubmit="return confirm('本当にこのナレッジを削除しますか？');"
+                >
+                  <button
+                    class="mt-2 rounded-md bg-red-600 px-3 py-1 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                    type="submit"
+                  >
+                    削除
+                  </button>
+                </form>
               </li>
             ))}
           </ul>
