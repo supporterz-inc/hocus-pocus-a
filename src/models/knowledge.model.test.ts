@@ -1,5 +1,8 @@
-import { describe, expect, it } from 'vitest';
+import { constants } from 'node:fs';
+import { access, unlink } from 'node:fs/promises';
+import { afterEach, describe, expect, it } from 'vitest';
 import { Knowledge } from './knowledge.model.js';
+import { KnowledgeRepository } from './knowledge.repository.js';
 
 describe('Create Knowledge', () => {
   it('Knowledge が作成できる', () => {
@@ -13,19 +16,44 @@ describe('Create Knowledge', () => {
   });
 });
 
-describe('Update Knowledge', () => {
-  it('Knowledge が更新できる', () => {
-    const original = Knowledge.create('This is an original content', 'test-author');
-    const content = 'This is an updated content.';
+describe('KnowledgeRepository', () => {
+  afterEach(async () => {
+    // Clean up any files created during tests
+    try {
+      const files = await KnowledgeRepository.getAll();
+      await Promise.all(
+        files.map(async (file) => {
+          await unlink(`./storage/${file.knowledgeId}.json`);
+        }),
+      );
+    } catch (_error) {
+      // Ignore if directory doesn't exist or other cleanup issues
+    }
+  });
 
-    setTimeout(() => {
-      const updated = Knowledge.update(original, content);
+  it('deleteByKnowledgeId がナレッジを削除できる', async () => {
+    const knowledge = Knowledge.create('Test content for deletion', 'test-author-delete');
+    await KnowledgeRepository.upsert(knowledge);
 
-      expect(updated.knowledgeId).toBe(original.knowledgeId);
-      expect(updated.content).toBe(content);
-      expect(updated.authorId).toBe(original.authorId);
-      expect(updated.createdAt).toEqual(original.createdAt);
-      expect(updated.updatedAt).toBeGreaterThan(original.updatedAt);
-    }, 100);
+    // Verify the file exists before deletion
+    await expect(access(`./storage/${knowledge.knowledgeId}.json`, constants.F_OK)).resolves.toBeUndefined();
+
+    await KnowledgeRepository.deleteByKnowledgeId(knowledge.knowledgeId);
+
+    // Verify the file no longer exists after deletion
+    await expect(access(`./storage/${knowledge.knowledgeId}.json`, constants.F_OK)).rejects.toThrow();
+  });
+
+  it('getByKnowledgeId がナレッジを取得できる', async () => {
+    const knowledge = Knowledge.create('Test content for get', 'test-author-get');
+    await KnowledgeRepository.upsert(knowledge);
+
+    const fetchedKnowledge = await KnowledgeRepository.getByKnowledgeId(knowledge.knowledgeId);
+    expect(fetchedKnowledge).toEqual(knowledge);
+  });
+
+  it('getByKnowledgeId が存在しないナレッジに対して undefined を返す', async () => {
+    const fetchedKnowledge = await KnowledgeRepository.getByKnowledgeId('non-existent-id');
+    expect(fetchedKnowledge).toBeUndefined();
   });
 });
