@@ -23,3 +23,4 @@ router.get('/articles', (c) => {
 router.post('/articles', async (c) => {
   return await postKnowledgeController(c);
 });
+router.post('/knowledges', postKnowledgeController);

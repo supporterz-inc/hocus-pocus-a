@@ -11,7 +11,7 @@ export function NewKnowledgeFeature() {
             </div>
             <form action="/articles" method="post">
               <div>
-                <label class="block text-sm font-medium text-gray-700" for="title">
+                {/* <label class="block text-sm font-medium text-gray-700" for="title">
                   タイトル
                 </label>
                 <div class="mt-1">
@@ -22,7 +22,7 @@ export function NewKnowledgeFeature() {
                     required
                     type="text"
                   />
-                </div>
+                </div> */}
               </div>
 
               <div class="mt-6">
@@ -52,6 +52,32 @@ export function NewKnowledgeFeature() {
           </div>
         </div>
       </div>
+      <script>
+        {`
+          document.getElementById('create-knowledge-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const content = formData.get('content');
+
+            const response = await fetch('/articles', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ content }),
+            });
+
+            if (response.ok) {
+              window.location.href = '/';
+            } else {
+              console.error('Form submission failed');
+              alert('投稿に失敗しました。');
+            }
+          });
+        `}
+      </script>
     </Layout>
   );
 }

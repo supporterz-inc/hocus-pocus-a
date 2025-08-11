@@ -1,10 +1,16 @@
 import type { Context } from 'hono';
+import { Knowledge } from '../models/knowledge.model.js';
+import { KnowledgeRepository } from '../models/knowledge.repository.js';
 
-export async function postKnowledgeController(c: Context) {
-  const body = await c.req.parseBody();
+export async function postKnowledgeController(ctx: Context) {
+  const body = await ctx.req.parseBody();
+  console.log(body['content']);
+  //const { content } = await ctx.req.json<{ content: string }>();
+  const userId = ctx.get('userId');
+  const content = String(body['content']);
 
-  // TODO: body の内容をストレージに保存する処理を実装する
-  console.log('Form data:', body);
+  const knowledge = Knowledge.create(content, userId);
+  await KnowledgeRepository.upsert(knowledge);
 
-  return c.redirect('/articles', 303);
+  return ctx.redirect('/');
 }
