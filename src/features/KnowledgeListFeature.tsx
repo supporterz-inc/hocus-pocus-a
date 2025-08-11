@@ -20,7 +20,11 @@ export function KnowledgeListFeature({ knowledges }: Props) {
         {knowledges.length ? (
           <ul>
             {knowledges.map((knowledge) => (
-              <li key={knowledge.knowledgeId}>{knowledge.knowledgeId}</li>
+              <li class="border-b border-gray-200 py-4" key={knowledge.knowledgeId}>
+                <p class="text-sm text-black-800">{knowledge.content}</p>
+                <p class="mt-1 text-gray-400">作成者: {knowledge.authorId}</p>
+                <p class="mt-1 text-gray-400">作成日時: {new Date(knowledge.createdAt * 1000).toLocaleString()}</p>
+              </li>
             ))}
           </ul>
         ) : (
