@@ -14,8 +14,8 @@ const app = new Hono<{ Variables: Variables }>();
 
 const useDebugUser = process.argv[2];
 const iapIssuer = 'https://supporterz-inc.cloudflareaccess.com';
-// const iapAudience = process.env['IAP_AUDIENCE']!;
-const iapAudience = 'test';
+const iapAudience = process.env['IAP_AUDIENCE']!;
+//const iapAudience = 'test';
 const jwks = createRemoteJWKSet(new URL(`${iapIssuer}/cdn-cgi/access/certs`));
 const port = parseInt(process.env['PORT'] ?? '8080');
 
