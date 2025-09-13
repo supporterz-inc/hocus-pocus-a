@@ -28,13 +28,17 @@ router.get('/knowledges/new', (ctx) => {
 router.post('/knowledges', async (ctx) => {
   // フォームデータ (Markdown本文) を取得
   const formData = await ctx.req.formData();
-  const content = formData.get('content') as string;
+  const content = formData.get('content');
+
+  if (typeof content !== 'string') {
+    return ctx.text('Invalid content', 400);
+  }
 
   // 認証ユーザーのIDを取得
   const authorId = ctx.get('userId');
 
   // ナレッジを作成するコントローラーを呼び出す
-  await createKnowledgeController({ content, authorId });
+  await createKnowledgeController(content, authorId);
 
   // トップページにリダイレクト
   return ctx.redirect('/');
