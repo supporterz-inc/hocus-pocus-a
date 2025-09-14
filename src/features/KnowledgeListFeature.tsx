@@ -12,10 +12,13 @@ export function KnowledgeListFeature({ userId, knowledges }: Props) {
       <p>
         こんにちは <span class="text-blue-500 font-bold">{userId}</span> さん
       </p>
+      <p>
+        <a href="/knowledges/new">新規作成</a>
+      </p>
       {knowledges.length ? (
         <ul>
           {knowledges.map((knowledge) => (
-            <li key={knowledge.knowledgeId}>{knowledge.knowledgeId}</li>
+            <li key={knowledge.knowledgeId}>{knowledge.title}</li>
           ))}
         </ul>
       ) : (
