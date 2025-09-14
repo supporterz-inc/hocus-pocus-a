@@ -1,5 +1,5 @@
-import { KnowledgeCreateFeature } from "../features/KnowledgeCreateFeature.js";
+import { KnowledgeCreateFeature } from '../features/KnowledgeCreateFeature.js';
 
 export async function getNewKnowledgeController() {
-    return (<KnowledgeCreateFeature/>);
+  return <KnowledgeCreateFeature />;
 }
