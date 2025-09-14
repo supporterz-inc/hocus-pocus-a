@@ -37,8 +37,15 @@ router.post('/knowledges', async (ctx) => {
   // 認証ユーザーのIDを取得
   const authorId = ctx.get('userId');
 
+  //ナレッジのタイトルを取得
+  const title = formData.get('title');
+
+  if (typeof title !== 'string') {
+    return ctx.text('Invalid title', 400);
+  }
+
   // ナレッジを作成するコントローラーを呼び出す
-  await createKnowledgeController(content, authorId);
+  await createKnowledgeController(content, authorId, title);
 
   // トップページにリダイレクト
   return ctx.redirect('/');

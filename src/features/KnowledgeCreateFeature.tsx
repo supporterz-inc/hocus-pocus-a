@@ -3,6 +3,21 @@ export function KnowledgeCreateFeature() {
     <form action="/knowledges" method="post">
       <div class="space-y-4">
         <div>
+          <label class="block text-sm font-medium text-gray-700" for="title">
+            Title
+          </label>
+          <div class="mt-1">
+            <input
+              class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              id="title"
+              name="title"
+              placeholder="記事のタイトル"
+              required
+              type="text"
+            />
+          </div>
+        </div>
+        <div>
           <label class="block text-sm font-medium text-gray-700" for="content">
             Markdown
           </label>
