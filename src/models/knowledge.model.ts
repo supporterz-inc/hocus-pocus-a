@@ -28,6 +28,11 @@ export interface Knowledge {
   readonly content: string;
 
   /**
+   * ナレッジのタイトル
+   */
+  readonly title: string;
+
+  /**
    * ナレッジの作成日時 (UNIX タイムスタンプ)
    */
   readonly createdAt: number;
@@ -43,15 +48,17 @@ export interface Knowledge {
  *
  * @param content ナレッジの本文
  * @param authorId ナレッジの作成者の ID
+ * @param title ナレッジのタイトル
  * @returns 新規作成されたナレッジ
  */
-function create(content: Knowledge['content'], authorId: Knowledge['authorId']): Knowledge {
+function create(content: Knowledge['content'], authorId: Knowledge['authorId'], title: Knowledge['title']): Knowledge {
   const now = Math.floor(Date.now() / 1000);
 
   return {
     __tag: 'Knowledge',
     knowledgeId: randomUUID(),
     content,
+    title,
     authorId,
     createdAt: now,
     updatedAt: now,
@@ -59,7 +66,7 @@ function create(content: Knowledge['content'], authorId: Knowledge['authorId']):
 }
 
 /**
- * ナレッジを更新する
+ * ナレッジを更新するKnowledge
  *
  * @param knowledge 更新対象のナレッジ
  * @param content 新しいナレッジの本文
