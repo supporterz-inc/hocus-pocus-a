@@ -33,7 +33,6 @@ async function getByKnowledgeId(knowledgeId: string): Promise<Knowledge | null> 
 }
 
 export const KnowledgeRepository = {
-  // biome-ignore lint/suspicious/noExplicitAny: TODO: (学生向け) 実装する
   getByKnowledgeId,
 
   // biome-ignore lint/suspicious/noExplicitAny: TODO: (学生向け) 実装する

@@ -1,37 +1,48 @@
-import { Knowledge } from "../models/knowledge.model.js";
-import { marked } from "marked";
-import DOMPurify from "dompurify";
-import { Layout } from "./Layout.js";
+import { raw } from 'hono/html';
+import { marked } from 'marked';
+import type { Knowledge } from '../models/knowledge.model.js';
+import { Layout } from './Layout.js';
 
 interface Props {
   knowledge: Knowledge;
 }
 
-
-
-async function ParseAndSanitizeMarkdown(markdown: string) {
-  const untrustHtml = await marked.parse(markdown);
-  const sanitizedHtml = DOMPurify.sanitize(untrustHtml);
-  return <div class="prose" dangerouslySetInnerHTML={{ __html: sanitizedHtml }} />;
-}
-
 export async function KnowledgeDetailFeature({ knowledge }: Props) {
-  // Markdown を HTML に変換してサニタイズ
-  const ParsedMarkdown = await ParseAndSanitizeMarkdown(knowledge.content);
+  console.log(knowledge);
+
+  console.log('a');
+  if (!knowledge) {
+    return <div>ナレッジが見つかりません。</div>;
+  }
+
+  if (
+    !knowledge.content ||
+    typeof knowledge.content !== 'string' ||
+    !knowledge.title ||
+    typeof knowledge.title !== 'string' ||
+    !knowledge.authorId ||
+    typeof knowledge.authorId !== 'string' ||
+    !knowledge.updatedAt ||
+    typeof knowledge.updatedAt !== 'number'
+  ) {
+    return <div>ナレッジのデータが不正です。</div>;
+  }
+
+  const html = await marked.parse(knowledge.content, { gfm: true, breaks: true });
 
   return (
     <Layout title={knowledge.title}>
       <article class="space-y-4">
         <h1 class="text-2xl font-bold">{knowledge.title}</h1>
-        {ParsedMarkdown}
-        <div class="prose">
-          <pre>{knowledge.content}</pre>
-        </div>
+        <div class="prose">{raw(html)}</div>
         <p class="text-sm text-gray-500">
           作成者: {knowledge.authorId} | 最終更新: {new Date(knowledge.updatedAt * 1000).toLocaleString()}
         </p>
-        <a href="/" class="text-blue-500 hover:underline">一覧に戻る</a>
+
+        <a class="text-blue-500 hover:underline" href="/">
+          一覧に戻る
+        </a>
       </article>
     </Layout>
-  )
+  );
 }

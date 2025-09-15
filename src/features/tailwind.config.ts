@@ -1,5 +1,5 @@
 import type { Config } from 'tailwindcss';
 
 export default {
-  content: ['./target/**/*.js'],
+  content: ['./src/**/*.{ts,tsx}'],
 } satisfies Config;
