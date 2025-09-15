@@ -1,4 +1,4 @@
-import { glob, readFile, writeFile } from 'node:fs/promises';
+import { glob, readFile, rm, writeFile } from 'node:fs/promises';
 import type { Knowledge } from './knowledge.model.js';
 
 async function getAll(): Promise<Knowledge[]> {
@@ -32,6 +32,16 @@ async function getByKnowledgeId(knowledgeId: string): Promise<Knowledge | null> 
   return knowledge;
 }
 
+async function deleteByKnowledgeId(knowledgeId: string): Promise<void> {
+  const filePath = `./storage/${knowledgeId}.json`;
+  await rm(filePath).catch((err) => {
+    // ファイルが存在しない場合は無視する
+    if (err.code !== 'ENOENT') {
+      throw err;
+    }
+  });
+}
+
 export const KnowledgeRepository = {
   getByKnowledgeId,
 
@@ -42,6 +52,5 @@ export const KnowledgeRepository = {
 
   upsert,
 
-  // biome-ignore lint/suspicious/noExplicitAny: TODO: (学生向け) 実装する
-  deleteByKnowledgeId: (_: string): Promise<void> => undefined as any,
+  deleteByKnowledgeId,
 };

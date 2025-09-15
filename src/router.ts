@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { createKnowledgeController } from './controllers/create-knowledge.controller.js';
+import { deleteKnowledgeController } from './controllers/delete-knowledge.controller.js';
 import { getAllKnowledgesController } from './controllers/get-all-knowledges.controller.js';
 import { getKnowledgeByIdController } from './controllers/get-knowledge-by-id.controler.js';
 import { getNewKnowledgeController } from './controllers/get-new-knowledge.controller.js';
@@ -57,4 +58,15 @@ router.get('/knowledges/:knowledgeId', async (ctx) => {
   const { knowledgeId } = ctx.req.param();
   console.log(knowledgeId);
   return ctx.html(await getKnowledgeByIdController(knowledgeId));
+});
+
+// ナレッジ削除の処理
+router.post('/knowledges/:knowledgeId/delete', async (ctx) => {
+  const { knowledgeId } = ctx.req.param();
+
+  // ナレッジ削除のコントローラーを呼び出す
+  await deleteKnowledgeController(knowledgeId);
+
+  // トップページにリダイレクト
+  return ctx.redirect('/');
 });

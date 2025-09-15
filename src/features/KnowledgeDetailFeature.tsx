@@ -39,9 +39,17 @@ export async function KnowledgeDetailFeature({ knowledge }: Props) {
           作成者: {knowledge.authorId} | 最終更新: {new Date(knowledge.updatedAt * 1000).toLocaleString()}
         </p>
 
-        <a class="text-blue-500 hover:underline" href="/">
-          一覧に戻る
-        </a>
+        <div class="flex items-center space-x-4">
+          <a class="text-blue-500 hover:underline" href="/">
+            一覧に戻る
+          </a>
+
+          <form action={`/knowledges/${knowledge.knowledgeId}/delete`} method="post">
+            <button class="text-red-500 hover:underline" type="submit">
+              削除する
+            </button>
+          </form>
+        </div>
       </article>
     </Layout>
   );
