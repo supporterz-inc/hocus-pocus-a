@@ -18,7 +18,11 @@ export function KnowledgeListFeature({ userId, knowledges }: Props) {
       {knowledges.length ? (
         <ul>
           {knowledges.map((knowledge) => (
-            <li key={knowledge.knowledgeId}>{knowledge.title}</li>
+            <li key={knowledge.knowledgeId}>
+              <a class="text-blue-500 underline" href={`/knowledges/${knowledge.knowledgeId}`}>
+                {knowledge.title}
+              </a>
+            </li>
           ))}
         </ul>
       ) : (

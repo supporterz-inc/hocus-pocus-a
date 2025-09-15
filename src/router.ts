@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { createKnowledgeController } from './controllers/create-knowledge.controller.js';
 import { getAllKnowledgesController } from './controllers/get-all-knowledges.controller.js';
+import { getKnowledgeByIdController } from './controllers/get-knowledge-by-id.controler.js';
 import { getNewKnowledgeController } from './controllers/get-new-knowledge.controller.js';
 
 export interface Variables {
@@ -49,4 +50,11 @@ router.post('/knowledges', async (ctx) => {
 
   // トップページにリダイレクト
   return ctx.redirect('/');
+});
+
+// ナレッジ詳細表示のページを表示する
+router.get('/knowledges/:knowledgeId', async (ctx) => {
+  const { knowledgeId } = ctx.req.param();
+  console.log(knowledgeId);
+  return ctx.html(await getKnowledgeByIdController(knowledgeId));
 });

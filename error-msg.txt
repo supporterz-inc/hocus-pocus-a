@@ -1,0 +1,54 @@
+7dbb5e21-13a4-418a-8881-5e2f6277094c
+b
+{
+  __tag: 'Knowledge',
+  knowledgeId: '7dbb5e21-13a4-418a-8881-5e2f6277094c',
+  content: '記事の内容',
+  title: '確認テスト',
+  authorId: '1987Shiz321',
+  createdAt: 1757831218,
+  updatedAt: 1757831218
+}
+a
+TypeError: str.search is not a function
+    at escapeToBuffer (file:///Users/shizaki723/github/hocus-pocus-a/node_modules/hono/dist/utils/html.js:44:21)
+    at JSXFunctionNode.toStringToBuffer (file:///Users/shizaki723/github/hocus-pocus-a/node_modules/hono/dist/jsx/base.js:200:7)
+    at childrenToStringToBuffer (file:///Users/shizaki723/github/hocus-pocus-a/node_modules/hono/dist/jsx/base.js:67:13)
+    at JSXNode.toStringToBuffer (file:///Users/shizaki723/github/hocus-pocus-a/node_modules/hono/dist/jsx/base.js:163:5)
+    at childrenToStringToBuffer (file:///Users/shizaki723/github/hocus-pocus-a/node_modules/hono/dist/jsx/base.js:67:13)
+    at JSXNode.toStringToBuffer (file:///Users/shizaki723/github/hocus-pocus-a/node_modules/hono/dist/jsx/base.js:163:5)
+    at childrenToStringToBuffer (file:///Users/shizaki723/github/hocus-pocus-a/node_modules/hono/dist/jsx/base.js:67:13)
+    at JSXNode.toStringToBuffer (file:///Users/shizaki723/github/hocus-pocus-a/node_modules/hono/dist/jsx/base.js:163:5)
+    at childrenToStringToBuffer (file:///Users/shizaki723/github/hocus-pocus-a/node_modules/hono/dist/jsx/base.js:67:13)
+    at JSXNode.toStringToBuffer (file:///Users/shizaki723/github/hocus-pocus-a/node_modules/hono/dist/jsx/base.js:163:5)
+{
+  __tag: 'Knowledge',
+  knowledgeId: '7dbb5e21-13a4-418a-8881-5e2f6277094c',
+  content: '記事の内容',
+  title: '確認テスト',
+  authorId: '1987Shiz321',
+  createdAt: 1757831218,
+  updatedAt: 1757831218
+}
+a
+TypeError: str.search is not a function
+    at escapeToBuffer (file:///Users/shizaki723/github/hocus-pocus-a/node_modules/hono/dist/utils/html.js:44:21)
+    at JSXFunctionNode.toStringToBuffer (file:///Users/shizaki723/github/hocus-pocus-a/node_modules/hono/dist/jsx/base.js:200:7)
+    at childrenToStringToBuffer (file:///Users/shizaki723/github/hocus-pocus-a/node_modules/hono/dist/jsx/base.js:67:13)
+    at JSXNode.toStringToBuffer (file:///Users/shizaki723/github/hocus-pocus-a/node_modules/hono/dist/jsx/base.js:163:5)
+    at childrenToStringToBuffer (file:///Users/shizaki723/github/hocus-pocus-a/node_modules/hono/dist/jsx/base.js:67:13)
+    at JSXNode.toStringToBuffer (file:///Users/shizaki723/github/hocus-pocus-a/node_modules/hono/dist/jsx/base.js:163:5)
+    at childrenToStringToBuffer (file:///Users/shizaki723/github/hocus-pocus-a/node_modules/hono/dist/jsx/base.js:67:13)
+    at JSXNode.toStringToBuffer (file:///Users/shizaki723/github/hocus-pocus-a/node_modules/hono/dist/jsx/base.js:163:5)
+    at childrenToStringToBuffer (file:///Users/shizaki723/github/hocus-pocus-a/node_modules/hono/dist/jsx/base.js:67:13)
+    at JSXNode.toStringToBuffer (file:///Users/shizaki723/github/hocus-pocus-a/node_modules/hono/dist/jsx/base.js:163:5)
+{
+  __tag: 'Knowledge',
+  knowledgeId: '7dbb5e21-13a4-418a-8881-5e2f6277094c',
+  content: '記事の内容',
+  title: '確認テスト',
+  authorId: '1987Shiz321',
+  createdAt: 1757831218,
+  updatedAt: 1757831218
+}
+a

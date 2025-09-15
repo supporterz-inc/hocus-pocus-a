@@ -45,3 +45,28 @@
   --border-radius-8: 8px;
   --border-radius-full: 9999px;
 }
+
+h1 {
+  font-size: var(--font-size-32);
+  font-weight: bold;
+}
+h2 {
+  font-size: var(--font-size-20);
+  font-weight: bold;
+}
+h3 {
+  font-size: var(--font-size-18);
+  font-weight: bold;
+}
+h4 {
+  font-size: var(--font-size-16);
+  font-weight: bold;
+}
+h5 {
+  font-size: var(--font-size-14);
+  font-weight: bold;
+}
+h6 {
+  font-size: var(--font-size-12);
+  font-weight: bold;
+}
