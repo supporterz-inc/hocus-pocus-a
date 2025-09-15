@@ -15,15 +15,15 @@ export function KnowledgeFormFeature(props: KnowledgeFormFeatureProps) {
 
   return (
     <Layout title={isUpdate ? 'ナレッジ編集' : 'ナレッジ投稿'}>
-      <form action={postPath} method="post">
-        <div class="space-y-4">
+      <div class="rounded-lg bg-white p-4 shadow-sm border border-gray-200">
+        <form action={postPath} class="space-y-4" method="post">
           <div>
             <label class="block text-sm font-medium text-gray-700" for="title">
-              Title
+              タイトル
             </label>
             <div class="mt-1">
               <input
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                class="block w-full rounded-md border border-gray-300 bg-white p-2 text-sm shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                 id="title"
                 name="title"
                 placeholder="記事のタイトル"
@@ -35,11 +35,11 @@ export function KnowledgeFormFeature(props: KnowledgeFormFeatureProps) {
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700" for="content">
-              Markdown
+              本文（Markdown）
             </label>
             <div class="mt-1">
               <textarea
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                class="block w-full rounded-md border border-gray-300 bg-white p-2 text-sm shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                 id="content"
                 name="content"
                 placeholder="記事の内容を Markdown 形式で記述してください"
@@ -51,16 +51,16 @@ export function KnowledgeFormFeature(props: KnowledgeFormFeatureProps) {
             </div>
           </div>
 
-          <div>
-            <button
-              class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-              type="submit"
-            >
+          <div class="flex items-center gap-2">
+            <button class="btn btn-primary" type="submit">
               {isUpdate ? '更新する' : '投稿する'}
             </button>
+            <a class="btn btn-ghost" href={isUpdate ? `/knowledges/${knowledgeId}` : '/'}>
+              キャンセル
+            </a>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </Layout>
   );
 }
