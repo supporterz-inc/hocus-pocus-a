@@ -1,3 +1,24 @@
+# ナレッジ削除機能のUX改善提案
+
+現在の実装では、「削除する」ボタンをクリックすると確認なしに即座にナレッジが削除されてしまいます。これは誤操作を招く可能性があり、ユーザーエクスペリエンスの観点から改善が望まれます。
+
+## 提案: 削除確認ダイアログの追加
+
+最もシンプルかつ効果的な改善策として、ブラウザ標準の確認ダイアログの実装を提案します。
+フォームが送信される直前に `window.confirm()` を呼び出し、ユーザーに「本当にこの記事を削除しますか？？」と問いかけます。
+
+-   ユーザーが「OK」を選択した場合：処理を続行し、フォームを送信します。
+-   ユーザーが「キャンセル」を選択した場合：処理を中断し、フォームの送信を中止します。
+
+この変更はフロントエンドの改修のみで完結するため、既存のバックエンドのロジックに影響を与えません。
+
+## 編集案
+
+### `src/features/KnowledgeDetailFeature.tsx` の更新
+
+`form` タグに `onsubmit` イベントハンドラを追加します。
+
+```typescript
 import { raw } from 'hono/html';
 import { marked } from 'marked';
 import type { Knowledge } from '../models/knowledge.model.js';
@@ -8,9 +29,6 @@ interface Props {
 }
 
 export async function KnowledgeDetailFeature({ knowledge }: Props) {
-  console.log(knowledge);
-
-  console.log('a');
   if (!knowledge) {
     return <div>ナレッジが見つかりません。</div>;
   }
@@ -47,7 +65,7 @@ export async function KnowledgeDetailFeature({ knowledge }: Props) {
           <form
             action={`/knowledges/${knowledge.knowledgeId}/delete`}
             method="post"
-            onsubmit="return window.confirm('本当に削除しますか？');"
+            onsubmit="return window.confirm('本当にこの記事を削除しますか？')"
           >
             <button class="text-red-500 hover:underline" type="submit">
               削除する
@@ -58,3 +76,4 @@ export async function KnowledgeDetailFeature({ knowledge }: Props) {
     </Layout>
   );
 }
+```
