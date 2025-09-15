@@ -70,3 +70,52 @@ h6 {
   font-size: var(--font-size-12);
   font-weight: bold;
 }
+
+/* Components */
+.btn {
+  @apply inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition-colors border border-transparent shadow-sm;
+}
+.btn-primary {
+  @apply bg-blue-500 text-white hover:bg-blue-500/90 focus:outline-none focus:ring-2 focus:ring-blue-100;
+}
+.btn-ghost {
+  @apply bg-white text-gray-700 border border-gray-200 hover:bg-gray-100;
+}
+.btn-danger {
+  @apply bg-red-500 text-white hover:bg-red-500/90 focus:outline-none focus:ring-2 focus:ring-red-100;
+}
+
+/* Markdown styles (simple, mobile-first) */
+.markdown {
+  @apply text-gray-900 leading-relaxed text-sm;
+}
+.markdown h1 {
+  @apply text-2xl font-bold mt-4 mb-2;
+}
+.markdown h2 {
+  @apply text-xl font-bold mt-4 mb-2;
+}
+.markdown h3 {
+  @apply text-lg font-semibold mt-3 mb-2;
+}
+.markdown p {
+  @apply my-3;
+}
+.markdown ul {
+  @apply list-disc pl-5 my-3;
+}
+.markdown ol {
+  @apply list-decimal pl-5 my-3;
+}
+.markdown a {
+  @apply text-blue-500 underline hover:no-underline;
+}
+.markdown code {
+  @apply rounded bg-gray-100 px-1 py-0.5 text-sm;
+}
+.markdown pre {
+  @apply overflow-x-auto rounded bg-gray-900 text-white p-3 my-3;
+}
+.markdown blockquote {
+  @apply border-l-4 border-gray-300 pl-3 italic text-gray-700 my-3;
+}
