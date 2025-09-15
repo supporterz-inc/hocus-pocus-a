@@ -3,10 +3,6 @@ import { KnowledgeRepository } from '../models/knowledge.repository.js';
 
 export async function getKnowledgeByIdController(knowledgeId: string) {
   const knowledge = await KnowledgeRepository.getByKnowledgeId(knowledgeId);
-  if (knowledge !== null) {
-    return <KnowledgeDetailFeature knowledge={knowledge} />;
-  } else {
-    // TODO: エラーページを返す
-    return <div>Not Found</div>;
-  }
+  if (knowledge == null) return <div>Not Found</div>;
+  return <KnowledgeDetailFeature knowledge={knowledge} />;
 }
