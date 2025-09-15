@@ -12,19 +12,6 @@ export async function KnowledgeDetailFeature({ knowledge }: Props) {
     return <div>ナレッジが見つかりません。</div>;
   }
 
-  if (
-    !knowledge.content ||
-    typeof knowledge.content !== 'string' ||
-    !knowledge.title ||
-    typeof knowledge.title !== 'string' ||
-    !knowledge.authorId ||
-    typeof knowledge.authorId !== 'string' ||
-    !knowledge.updatedAt ||
-    typeof knowledge.updatedAt !== 'number'
-  ) {
-    return <div>ナレッジのデータが不正です。</div>;
-  }
-
   const html = await marked.parse(knowledge.content, { gfm: true, breaks: true });
 
   return (

@@ -28,6 +28,22 @@ async function getByKnowledgeId(knowledgeId: string): Promise<Knowledge | null> 
   }
 
   const knowledge: Knowledge = JSON.parse(rawData);
+
+  //データのバリデーション処理
+  if (
+    !knowledge.content ||
+    typeof knowledge.content !== 'string' ||
+    !knowledge.title ||
+    typeof knowledge.title !== 'string' ||
+    !knowledge.authorId ||
+    typeof knowledge.authorId !== 'string' ||
+    !knowledge.updatedAt ||
+    typeof knowledge.updatedAt !== 'number'
+  ) {
+    // データが不正な場合は null を返す
+    return null;
+  }
+
   return knowledge;
 }
 
