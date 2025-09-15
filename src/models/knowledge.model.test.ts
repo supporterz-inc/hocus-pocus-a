@@ -21,11 +21,13 @@ describe('Update Knowledge', () => {
   it('Knowledge が更新できる', () => {
     const original = Knowledge.create('This is an original content', 'test-author', 'test-title');
     const content = 'This is an updated content.';
+    const title = 'updated-title';
 
     setTimeout(() => {
-      const updated = Knowledge.update(original, content);
+      const updated = Knowledge.update(original, title, content);
 
       expect(updated.knowledgeId).toBe(original.knowledgeId);
+      expect(updated.title).toBe(title);
       expect(updated.content).toBe(content);
       expect(updated.authorId).toBe(original.authorId);
       expect(updated.createdAt).toEqual(original.createdAt);
