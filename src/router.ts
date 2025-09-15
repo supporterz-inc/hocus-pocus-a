@@ -2,8 +2,12 @@ import { Hono } from 'hono';
 import { createKnowledgeController } from './controllers/create-knowledge.controller.js';
 import { deleteKnowledgeController } from './controllers/delete-knowledge.controller.js';
 import { getAllKnowledgesController } from './controllers/get-all-knowledges.controller.js';
+import {
+  getNewKnowledgeController,
+  getUpdateKnowledgeController,
+} from './controllers/get-from-knowledge.controller.js';
 import { getKnowledgeByIdController } from './controllers/get-knowledge-by-id.controler.js';
-import { getNewKnowledgeController } from './controllers/get-new-knowledge.controller.js';
+import { updateKnowledgeController } from './controllers/update-knowledge.controller.js';
 
 export interface Variables {
   userId: string;
@@ -56,8 +60,35 @@ router.post('/knowledges', async (ctx) => {
 // ナレッジ詳細表示のページを表示する
 router.get('/knowledges/:knowledgeId', async (ctx) => {
   const { knowledgeId } = ctx.req.param();
-  console.log(knowledgeId);
   return ctx.html(await getKnowledgeByIdController(knowledgeId));
+});
+
+// 更新画面を表示する
+router.get('/knowledges/:knowledgeId/edit', async (ctx) => {
+  const { knowledgeId } = ctx.req.param();
+  return ctx.html(await getUpdateKnowledgeController(knowledgeId));
+});
+
+router.post('/knowledges/:knowledgeId', async (ctx) => {
+  const { knowledgeId } = ctx.req.param();
+
+  // フォームデータ (Markdown本文) を取得
+  const formData = await ctx.req.formData();
+  const content = formData.get('content');
+
+  if (typeof content !== 'string') {
+    return ctx.text('Invalid content', 400);
+  }
+
+  //ナレッジのタイトルを取得
+  const title = formData.get('title');
+  if (typeof title !== 'string') {
+    return ctx.text('Invalid title', 400);
+  }
+  await updateKnowledgeController(content, title, knowledgeId);
+
+  // トップページにリダイレクト
+  return ctx.redirect(`/knowledges/${knowledgeId}`);
 });
 
 // ナレッジ削除の処理

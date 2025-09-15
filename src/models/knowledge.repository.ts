@@ -9,10 +9,9 @@ async function getAll(): Promise<Knowledge[]> {
   return knowledges;
 }
 
-// TODO: エントリが存在すれば更新、なければ作成の処理をする
 async function upsert(knowledge: Knowledge): Promise<void> {
   const filePath = `./storage/${knowledge.knowledgeId}.json`;
-  await writeFile(filePath, JSON.stringify(knowledge, null, 2), 'utf-8');
+  await writeFile(filePath, JSON.stringify(knowledge, null, 2), { encoding: 'utf-8' });
 }
 
 /**

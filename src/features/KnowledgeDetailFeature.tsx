@@ -8,9 +8,6 @@ interface Props {
 }
 
 export async function KnowledgeDetailFeature({ knowledge }: Props) {
-  console.log(knowledge);
-
-  console.log('a');
   if (!knowledge) {
     return <div>ナレッジが見つかりません。</div>;
   }
@@ -42,6 +39,10 @@ export async function KnowledgeDetailFeature({ knowledge }: Props) {
         <div class="flex items-center space-x-4">
           <a class="text-blue-500 hover:underline" href="/">
             一覧に戻る
+          </a>
+
+          <a class="text-blue-500 hover:underline" href={`/knowledges/${knowledge.knowledgeId}/edit`}>
+            編集する
           </a>
 
           <form
