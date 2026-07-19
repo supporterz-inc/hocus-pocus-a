@@ -20,7 +20,7 @@ export function KnowledgeListFeature({ userId, knowledges }: Props) {
         </ul>
       ) : (
         <ul>
-          <li>投稿済みのナレッジは 0 件です</li>
+          <li>投稿済みのナレッジは 「0」 件です</li>
         </ul>
       )}
     </Layout>
