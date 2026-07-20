@@ -16,4 +16,17 @@ describe('KnowledgeRepository', () => {
 
     await rm(path.join('./storage', `${knowledge.knowledgeId}.json`), { force: true });
   });
+
+  it('保存したナレッジを ID で取得できる', async () => {
+    const knowledge = Knowledge.create('詳細表示テスト用の内容', 'test-author');
+
+    await KnowledgeRepository.upsert(knowledge);
+
+    const found = await KnowledgeRepository.getByKnowledgeId(knowledge.knowledgeId);
+
+    expect(found?.knowledgeId).toBe(knowledge.knowledgeId);
+    expect(found?.content).toBe(knowledge.content);
+
+    await rm(path.join('./storage', `${knowledge.knowledgeId}.json`), { force: true });
+  });
 });

@@ -11,6 +11,17 @@ async function getAll(): Promise<Knowledge[]> {
   return knowledges;
 }
 
+async function getByKnowledgeId(knowledgeId: string): Promise<Knowledge | null> {
+  const filePath = path.join('./storage', `${knowledgeId}.json`);
+
+  try {
+    const content = await readFile(filePath, 'utf-8');
+    return JSON.parse(content) as Knowledge;
+  } catch {
+    return null;
+  }
+}
+
 async function upsert(knowledge: Knowledge): Promise<void> {
   const filePath = path.join('./storage', `${knowledge.knowledgeId}.json`);
 
@@ -19,8 +30,7 @@ async function upsert(knowledge: Knowledge): Promise<void> {
 }
 
 export const KnowledgeRepository = {
-  // biome-ignore lint/suspicious/noExplicitAny: TODO: (学生向け) 実装する
-  getByKnowledgeId: (_: string): Promise<Knowledge> => undefined as any,
+  getByKnowledgeId,
 
   // biome-ignore lint/suspicious/noExplicitAny: TODO: (学生向け) 実装する
   getByAuthorId: (_: string): Promise<Knowledge[]> => undefined as any,
