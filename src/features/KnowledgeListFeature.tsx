@@ -30,6 +30,24 @@ export function KnowledgeListFeature({ userId, knowledges }: Props) {
           ナレッジを投稿する
         </button>
       </form>
+      <section class="mt-8 p-4 border border-gray-200 rounded-md bg-slate-50">
+        <p class="text-sm text-gray-600 mb-4">編集したいナレッジの ID を入力して、編集ページに移動してください。</p>
+        <form action="/edit" class="flex flex-col gap-3" method="get">
+          <input
+            aria-label="編集する knowledgeId"
+            class="w-full border border-gray-300 rounded-md px-4 py-3 bg-white text-base focus:outline-none focus:ring-2 focus:ring-yellow-300"
+            name="knowledgeId"
+            placeholder="編集したいナレッジの ID を入力"
+            type="text"
+          />
+          <button
+            class="w-full px-5 py-3 bg-yellow-500 text-white font-semibold rounded-lg hover:bg-yellow-600 transition-colors duration-150"
+            type="submit"
+          >
+            ナレッジを編集する
+          </button>
+        </form>
+      </section>
       {knowledges.length ? (
         <ul>
           {knowledges.map((knowledge) => (
@@ -37,11 +55,9 @@ export function KnowledgeListFeature({ userId, knowledges }: Props) {
           ))}
         </ul>
       ) : (
-        <>
-          <ul>
-            <li>投稿済みのナレッジは 0 件です</li>
-          </ul>
-        </>
+        <ul>
+          <li>投稿済みのナレッジは 0 件です</li>
+        </ul>
       )}
     </Layout>
   );

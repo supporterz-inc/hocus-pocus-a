@@ -1,4 +1,4 @@
-import { glob, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { glob, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import type { Knowledge } from './knowledge.model.js';
@@ -11,6 +11,25 @@ async function getAll(): Promise<Knowledge[]> {
   return knowledges;
 }
 
+async function getByKnowledgeId(knowledgeId: string): Promise<Knowledge> {
+  const filePath = path.join('./storage', `${knowledgeId}.json`);
+  const fileContent = await readFile(filePath, 'utf-8');
+
+  return JSON.parse(fileContent) as Knowledge;
+}
+
+async function getByAuthorId(authorId: string): Promise<Knowledge[]> {
+  const knowledges = await getAll();
+
+  return knowledges.filter((knowledge) => knowledge.authorId === authorId);
+}
+
+async function deleteByKnowledgeId(knowledgeId: string): Promise<void> {
+  const filePath = path.join('./storage', `${knowledgeId}.json`);
+
+  await rm(filePath, { force: true });
+}
+
 async function upsert(knowledge: Knowledge): Promise<void> {
   const filePath = path.join('./storage', `${knowledge.knowledgeId}.json`);
 
@@ -19,16 +38,9 @@ async function upsert(knowledge: Knowledge): Promise<void> {
 }
 
 export const KnowledgeRepository = {
-  // biome-ignore lint/suspicious/noExplicitAny: TODO: (学生向け) 実装する
-  getByKnowledgeId: (_: string): Promise<Knowledge> => undefined as any,
-
-  // biome-ignore lint/suspicious/noExplicitAny: TODO: (学生向け) 実装する
-  getByAuthorId: (_: string): Promise<Knowledge[]> => undefined as any,
-
+  getByKnowledgeId,
+  getByAuthorId,
   getAll,
-
   upsert,
-
-  // biome-ignore lint/suspicious/noExplicitAny: TODO: (学生向け) 実装する
-  deleteByKnowledgeId: (_: string): Promise<void> => undefined as any,
+  deleteByKnowledgeId,
 };
