@@ -30,6 +30,17 @@ async function deleteByKnowledgeId(knowledgeId: string): Promise<void> {
   await rm(filePath, { force: true });
 }
 
+// async function getByKnowledgeId(knowledgeId: string): Promise<Knowledge | null> {
+//   const filePath = path.join('./storage', `${knowledgeId}.json`);
+
+//   try {
+//     const content = await readFile(filePath, 'utf-8');
+//     return JSON.parse(content) as Knowledge;
+//   } catch {
+//     return null;
+//   }
+// }
+
 async function upsert(knowledge: Knowledge): Promise<void> {
   const filePath = path.join('./storage', `${knowledge.knowledgeId}.json`);
 
