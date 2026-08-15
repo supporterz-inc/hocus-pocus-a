@@ -30,10 +30,6 @@ export interface Knowledge {
    * ナレッジの本文 (Markdown)
    *
    * @todo (学生向け) 空白の場合は不正な Knowledge とみなす
-   * if (content.trim == ' ')
-   * if (content.trim().length === 0) {
-      throw new KnowledgeValidationError('本文を入力してください。');
-    }
    */
   readonly content: string;
 
@@ -81,6 +77,9 @@ function create(content: Knowledge['content'], authorId: Knowledge['authorId']):
  * @returns 更新されたナレッジ
  */
 function update(self: Knowledge, content: Knowledge['content']): Knowledge {
+  if (content.trim().length === 0) {
+    throw new InvalidKnowledgeContentError();
+  }
   return {
     ...self,
     content,
