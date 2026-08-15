@@ -1,4 +1,4 @@
-import { glob, readFile, mkdir, writeFile } from 'node:fs/promises'; //mkdir:ディレクトリ作成、writeFile:書き込み
+import { glob, mkdir, readFile, writeFile } from 'node:fs/promises'; //mkdir:ディレクトリ作成、writeFile:書き込み
 
 import type { Knowledge } from './knowledge.model.js';
 
@@ -11,14 +11,17 @@ async function getAll(): Promise<Knowledge[]> {
 }
 
 //upsertの実装
-async function upsert(knowledge: Knowledge,): Promise<void> {
-  await mkdir('./storage', { //storageフォルダを作る
+async function upsert(knowledge: Knowledge): Promise<void> {
+  await mkdir('./storage', {
+    //storageフォルダを作る
     recursive: true,
   });
-  const path =`./storage/${knowledge.knowledgeId}.json`; //ここで保存先を決める
-  await writeFile(path,
-    JSON.stringify(knowledge,null,2,) //json化
-    ,'utf-8',); //ファイル保存
+  const path = `./storage/${knowledge.knowledgeId}.json`; //ここで保存先を決める
+  await writeFile(
+    path,
+    JSON.stringify(knowledge, null, 2), //json化
+    'utf-8',
+  ); //ファイル保存
 }
 
 export const KnowledgeRepository = {
