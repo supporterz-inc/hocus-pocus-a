@@ -1,5 +1,11 @@
 import { randomUUID } from 'node:crypto';
 
+export class InvalidKnowledgeContentError extends Error {
+  constructor() {
+    super('Knowledge content is empty.');
+  }
+}
+
 /**
  * ナレッジのドメインモデル
  */
@@ -46,16 +52,21 @@ export interface Knowledge {
  * @returns 新規作成されたナレッジ
  */
 function create(content: Knowledge['content'], authorId: Knowledge['authorId']): Knowledge {
-  const now = Math.floor(Date.now() / 1000);
+  if (content.trim().length === 0){
+    throw new InvalidKnowledgeContentError();
+  } //空文字チェック
+  const now = Math.floor(Date.now() / 1000); //現在時刻取得
 
   return {
     __tag: 'Knowledge',
     knowledgeId: randomUUID(),
-    content,
-    authorId,
-    createdAt: now,
-    updatedAt: now,
+    content, //本文
+    authorId, //作成者
+    createdAt: now, //作成日時
+    updatedAt: now, //更新日時
   };
+
+  
 }
 
 /**
@@ -66,6 +77,9 @@ function create(content: Knowledge['content'], authorId: Knowledge['authorId']):
  * @returns 更新されたナレッジ
  */
 function update(self: Knowledge, content: Knowledge['content']): Knowledge {
+  if (content.trim().length === 0) {
+    throw new InvalidKnowledgeContentError();
+  }
   return {
     ...self,
     content,
