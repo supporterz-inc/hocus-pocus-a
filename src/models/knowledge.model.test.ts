@@ -52,4 +52,15 @@ describe('Update Knowledge', () => {
     expect(updated.updatedAt).toBeGreaterThan(original.updatedAt);
     vi.useRealTimers();
   });
+  it('空文字には更新できない', () => {
+    const knowledge = Knowledge.create(
+      '本文',
+      'test-author',
+    );
+    expect(() => {
+      Knowledge.update(knowledge,'',);
+    }).toThrow(
+      InvalidKnowledgeContentError,
+    );
+  });
 });
