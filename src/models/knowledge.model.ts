@@ -52,7 +52,7 @@ export interface Knowledge {
  * @returns 新規作成されたナレッジ
  */
 function create(content: Knowledge['content'], authorId: Knowledge['authorId']): Knowledge {
-  if (content.trim().length === 0){
+  if (content.trim().length === 0) {
     throw new InvalidKnowledgeContentError();
   } //空文字チェック
   const now = Math.floor(Date.now() / 1000); //現在時刻取得
@@ -65,8 +65,6 @@ function create(content: Knowledge['content'], authorId: Knowledge['authorId']):
     createdAt: now, //作成日時
     updatedAt: now, //更新日時
   };
-
-  
 }
 
 /**

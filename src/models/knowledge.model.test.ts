@@ -1,5 +1,5 @@
-import { describe, expect, it, vi} from 'vitest';
-import { Knowledge, InvalidKnowledgeContentError} from './knowledge.model.js';
+import { describe, expect, it, vi } from 'vitest';
+import { InvalidKnowledgeContentError, Knowledge } from './knowledge.model.js';
 
 describe('Create Knowledge', () => {
   it('Knowledge が作成できる', () => {
@@ -11,10 +11,9 @@ describe('Create Knowledge', () => {
     expect(knowledge.authorId).toBe(authorId);
     expect(knowledge.createdAt).toEqual(knowledge.updatedAt);
     expect(knowledge.knowledgeId).toMatch(
-      /^[0-9a-f-]{36}$/i //正規表現かどうかをチェック(UUID) 
-    )
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, //正規表現かどうかをチェック(UUID)
+    );
   });
-
 });
 
 it('空文字は作成できない', () => {
@@ -36,7 +35,6 @@ it('改行のみは作成できない', () => {
 });
 
 describe('Update Knowledge', () => {
-
   it('Knowledge が更新できる', () => {
     vi.useFakeTimers();
     const original = Knowledge.create('This is an original content', 'test-author');
@@ -44,7 +42,7 @@ describe('Update Knowledge', () => {
     const content = 'This is an updated content.';
 
     const updated = Knowledge.update(original, content);
-    
+
     expect(updated.knowledgeId).toBe(original.knowledgeId);
     expect(updated.content).toBe(content);
     expect(updated.authorId).toBe(original.authorId);
@@ -53,14 +51,9 @@ describe('Update Knowledge', () => {
     vi.useRealTimers();
   });
   it('空文字には更新できない', () => {
-    const knowledge = Knowledge.create(
-      '本文',
-      'test-author',
-    );
+    const knowledge = Knowledge.create('本文', 'test-author');
     expect(() => {
-      Knowledge.update(knowledge,'',);
-    }).toThrow(
-      InvalidKnowledgeContentError,
-    );
+      Knowledge.update(knowledge, '');
+    }).toThrow(InvalidKnowledgeContentError);
   });
 });
