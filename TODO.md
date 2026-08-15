@@ -48,38 +48,7 @@ Step 1から順番に進めます。各Stepのテストが通ってから次へ�
 
 ---
 
-## Step 1: 空のナレッジを作れないようにする
 
-### なぜ必要か
-
-画面の入力欄に `required` を付けても、別のツールから直接リクエストを送れば空の本文を送信できます。そのため、データを作る `Knowledge.create` 自体でも入力を確認します。
-
-### 変更するファイル
-
-- `src/models/knowledge.model.ts`
-- `src/models/knowledge.model.test.ts`
-
-### やること
-
-- [ ] `Knowledge.create(content, authorId)` の先頭で本文が空でないか確認する
-- [ ] `content.trim()` が空文字なら、専用のエラーを投げる
-- [ ] 確認にだけ `trim()` を使い、保存する `content` は加工しない
-- [ ] 通常の Markdown を渡すと作成できるテストを書く
-- [ ] `''`、`'   '`、改行だけを渡すと作成できないテストを書く
-- [ ] UUID形式の `knowledgeId` が作られることもテストする
-- [ ] 日時のテストには必要に応じて Vitest の fake timer を使い、`setTimeout` は使わない
-
-入力を加工しない理由は、Markdownでは行頭の空白や改行にも意味があるためです。
-
-### 確認方法
-
-```sh
-npm test -- src/models/knowledge.model.test.ts
-```
-
-正常な本文のテストと、空の本文を拒否するテストが両方通れば完了です。
-
----
 
 ## Step 2: ナレッジをファイルへ保存する
 
