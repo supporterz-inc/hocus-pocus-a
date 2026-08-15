@@ -30,7 +30,6 @@ export const KnowledgeRepository = {
 
   getAll,
 
-  // biome-ignore lint/suspicious/noExplicitAny: TODO: (学生向け) 実装する
   upsert,
 
   // biome-ignore lint/suspicious/noExplicitAny: TODO: (学生向け) 実装する
