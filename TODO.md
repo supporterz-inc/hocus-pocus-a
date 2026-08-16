@@ -1,283 +1,332 @@
-# ナレッジ作成機能 TODO（初心者向け）
+# ナレッジ詳細表示・更新・削除 実装 TODO
 
-## 何を作るのか
+この TODO は、次の 3 機能を小さな単位に分けて実装するための手順書です。
 
-ログイン中のユーザーが、画面の入力欄に Markdown を書いて保存できる機能を作ります。
+- ナレッジ詳細表示：指定したナレッジを 1 件表示する
+- ナレッジ更新：自分が投稿したナレッジの本文を編集する
+- ナレッジ削除：自分が投稿したナレッジを削除する
 
-完成後の操作は次のようになります。
+上から順に進め、各段階でテストを実行してください。最初からすべてを同時に作るより、問題が起きた場所を見つけやすくなります。
 
-1. ナレッジ一覧で「ナレッジを作成」を押す
-2. 作成画面の入力欄に Markdown を書く
-3. 「作成する」を押す
-4. 入力内容が `storage` フォルダーに JSON ファイルとして保存される
-5. ナレッジ一覧へ戻る
+## 0. 最初に全体の流れを理解する
 
-今回は Markdown の生文字列を保存するところまで実装します。HTML への変換やプレビューは、今後「ナレッジ詳細表示」を作るときに実装します。
-
-## このアプリの処理の流れ
-
-このアプリでは、処理を役割ごとに4つの場所へ分けています。
+このプロジェクトでは、処理を次の順番で受け渡します。
 
 ```text
-ブラウザー
-   ↓ リクエストを受け取る
-router.ts
-   ↓ 作成処理を依頼する
-controllers
-   ↓ ナレッジを作成・保存する
-models
-
-features で作った画面
-   ↓
-ブラウザーへ表示
+ブラウザ
+  ↓ HTTP リクエスト
+src/router.ts
+  ↓ 必要な値だけを渡す
+src/controllers
+  ↓ データの取得・更新を依頼する
+src/models
+  ↓ 表示に必要な値を渡す
+src/features
+  ↓ HTML
+ブラウザ
 ```
 
-- `src/models`: ナレッジのデータと保存ルールを置く場所
-- `src/features`: ユーザーが見る画面を置く場所
-- `src/controllers`: モデルと画面を順番につなぐ場所
-- `src/router.ts`: URLやGET・POSTなどのHTTP通信を扱う場所
+今回使用する URL と役割は次のようにします。
 
-Step 1から順番に進めます。各Stepのテストが通ってから次へ進むと、問題が起きた場所を見つけやすくなります。
+| HTTP メソッド | URL | 役割 |
+| --- | --- | --- |
+| `GET` | `/knowledges/:knowledgeId` | 詳細画面を表示する |
+| `GET` | `/knowledges/:knowledgeId/edit` | 編集画面を表示する |
+| `POST` | `/knowledges/:knowledgeId` | 編集内容を保存する |
+| `POST` | `/knowledges/:knowledgeId/delete` | ナレッジを削除する |
 
-## 今回は作らないもの
+`DELETE` メソッドを使わないのは、通常の HTML の `<form>` が `GET` と `POST` だけを送信できるためです。
 
-- Markdown のプレビューやHTML変換
-- タイトル、タグ、画像
-- 下書き保存
-- ナレッジの詳細表示、編集、削除
+## 1. 作業を始める準備
 
----
+- [ ] 作業用ブランチを作る
 
+  ```sh
+  git switch -c feature/knowledge-detail-update-delete
+  ```
 
+- [ ] 現在のテストが成功することを確認する
 
-## Step 2: ナレッジをファイルへ保存する
+  ```sh
+  npm test
+  ```
 
-### なぜ必要か
+- [ ] ビルドできることを確認する
 
-現在の `KnowledgeRepository.upsert` は未実装です。`Knowledge.create` で作ったデータはメモリ上にしかないため、アプリを終了しても残るようファイルへ書き込みます。
+  ```sh
+  npm run build
+  ```
 
-`upsert` は「同じIDのデータがなければ作成し、あれば上書きする」という意味です。
+テストやビルドが最初から失敗する場合は、今回の変更を始める前に原因をメモしてチームへ共有します。
 
-### 変更するファイル
+## 2. リポジトリに「1 件取得」と「削除」を実装する
+
+対象ファイル：
 
 - `src/models/knowledge.repository.ts`
-- `src/models/knowledge.repository.test.ts`（新規）
+- `src/models/knowledge.repository.test.ts`
 
-### やること
+### 2-1. 存在しないナレッジを表すエラーを決める
 
-- [ ] Node.js の `mkdir` と `writeFile` を `node:fs/promises` から読み込む
-- [ ] 保存前に `mkdir('./storage', { recursive: true })` を呼ぶ
-- [ ] 保存先を `storage/<knowledgeId>.json` にする
-- [ ] `Knowledge` を `JSON.stringify` でJSON文字列に変換する
-- [ ] `writeFile` でUTF-8のファイルとして保存する
-- [ ] 保存したファイルを読み戻し、元の `Knowledge` と同じ内容かテストする
-- [ ] テストで作ったファイルだけをテスト終了時に削除する
+- [ ] `KnowledgeNotFoundError` のような専用エラーを用意する
+- [ ] エラーには、探した `knowledgeId` を保持させる
 
-保存されるデータの例です。
+専用エラーがあると、`router.ts` で「見つからない場合だけ 404 にする」という判断ができます。ファイル読み込みで起きるすべてのエラーを 404 にしてはいけません。権限不足や壊れた JSON など、別の問題を隠してしまうためです。
 
-```json
-{
-  "__tag": "Knowledge",
-  "knowledgeId": "自動生成されたUUID",
-  "content": "# Markdownの本文",
-  "authorId": "ログイン中のユーザーID",
-  "createdAt": 1234567890,
-  "updatedAt": 1234567890
-}
-```
+### 2-2. `getByKnowledgeId` を実装する
 
-### 注意点
+- [ ] `./storage/${knowledgeId}.json` を `readFile` で読む
+- [ ] 読み込み前に ID が UUID 形式か検証し、不正な形式は `KnowledgeNotFoundError` にする
+- [ ] 読み込んだ JSON を `JSON.parse` して `Knowledge` として返す
+- [ ] 対象ファイルが存在しない `ENOENT` の場合だけ `KnowledgeNotFoundError` を投げる
+- [ ] それ以外のエラーは、そのまま投げ直す
+- [ ] 現在の仮実装と `noExplicitAny` の無視コメントを削除する
 
-- `storage/.gitignore` は削除しない
-- テスト時に `storage` フォルダー全体を削除しない
-- 書き込み失敗を成功扱いにせず、エラーを呼び出し元へ返す
+### 2-3. `deleteByKnowledgeId` を実装する
 
-### 確認方法
+- [ ] `node:fs/promises` の `unlink` で対象の JSON ファイルを削除する
+- [ ] 対象が存在しない場合は `KnowledgeNotFoundError` を投げる
+- [ ] 現在の仮実装と `noExplicitAny` の無視コメントを削除する
+
+URL の ID は利用者が自由に変更できます。ID が UUID 形式であることを確認してからパスへ入れ、`../` などを使って `storage` の外を読み書きできないようにします。取得と削除で同じ検証関数を利用してください。
+
+### 2-4. リポジトリの単体テストを追加する
+
+- [ ] 保存したナレッジを ID で取得できる
+- [ ] 存在しない ID を取得すると `KnowledgeNotFoundError` になる
+- [ ] 保存したナレッジを削除できる
+- [ ] 存在しない ID を削除すると `KnowledgeNotFoundError` になる
+- [ ] テストで作成した JSON は `try` / `finally` で必ず片付ける
+
+確認コマンド：
 
 ```sh
-npm test -- src/models/knowledge.repository.test.ts
+npx vitest run src/models/knowledge.repository.test.ts
 ```
 
-テスト後に不要なJSONファイルが残っていないことも確認します。
+## 3. ナレッジ詳細表示を実装する
 
----
+### 3-1. 詳細画面を作る
 
-## Step 3: Markdown を入力する画面を作る
+新規ファイル：`src/features/KnowledgeDetailFeature.tsx`
 
-### なぜ必要か
+- [ ] Props として `knowledge` と、ログイン中の `userId` を受け取る
+- [ ] 本文、作成者 ID、作成日時、更新日時を表示する
+- [ ] 一覧へ戻るリンクを置く
+- [ ] `knowledge.authorId === userId` の場合だけ「編集」「削除」を表示する
+- [ ] 375px 固定幅は既存の `Layout` に任せる
 
-ユーザーがブラウザーから本文を入力して送信できるフォームが必要です。
+最初は本文を `<pre class="whitespace-pre-wrap">` などで表示すれば、改行を保った安全な詳細画面を作れます。Markdown を HTML に変換する処理は別の課題として切り出せます。ユーザー入力をそのまま HTML として埋め込むと XSS の危険があるため、安易に raw HTML を使わないでください。
 
-### 変更するファイル
+### 3-2. 詳細表示コントローラーを作る
 
-- `src/features/KnowledgeCreateFeature.tsx`（新規）
+新規ファイル：`src/controllers/get-knowledge-detail.controller.tsx`
 
-### やること
+- [ ] 引数として `knowledgeId` と `userId` を受け取る
+- [ ] `KnowledgeRepository.getByKnowledgeId(knowledgeId)` で 1 件取得する
+- [ ] 取得結果を `KnowledgeDetailFeature` に渡して返す
 
-- [ ] 既存の `Layout` を使って作成画面を作る
-- [ ] `<form method="post" action="/knowledges">` を置く
-- [ ] Markdown用の `<textarea>` を置き、`name="content"` と `required` を付ける
-- [ ] `label` の `for` と `textarea` の `id` を同じ値にする
-- [ ] 「作成する」ボタンと、一覧へ戻るリンクを置く
-- [ ] エラー文と入力済み本文を受け取れる Props を用意する
-- [ ] エラー後に同じ本文を `textarea` へ再表示する
-- [ ] 既存の Tailwind CSS を使い、375px幅で操作しやすい画面にする
+Controller に Hono の `Context` を渡さず、必要な文字列だけを渡す点は既存コードに合わせます。
 
-フォームのおおまかな形は次のとおりです。
+### 3-3. 詳細表示ルートを追加する
 
-```tsx
-<form method="post" action="/knowledges">
-  <label for="content">本文（Markdown）</label>
-  <textarea id="content" name="content" required />
-  <button type="submit">作成する</button>
-</form>
-```
+対象ファイル：`src/router.ts`
 
-実装時には、エラー表示と入力値の再表示も追加します。
+- [ ] `GET /knowledges/:knowledgeId` を追加する
+- [ ] `ctx.req.param('knowledgeId')` から ID を取得する
+- [ ] `ctx.get('userId')` からログイン中のユーザー ID を取得する
+- [ ] 詳細表示コントローラーの結果を `ctx.html(...)` で返す
+- [ ] `KnowledgeNotFoundError` の場合はステータス `404` を返す
 
-### 確認方法
+ルートの登録順に注意します。`/knowledges/new` を `/knowledges/:knowledgeId` より先に登録しないと、`new` がナレッジ ID として扱われる可能性があります。同様に `/edit` ルートも詳細ルートとの関係を確認します。
 
-- ラベルを押すと入力欄にカーソルが移動する
-- 空のまま送信しようとすると必須入力チェックが働く
-- 横幅375pxでもボタンや入力欄がはみ出さない
+### 3-4. 一覧から詳細へ移動できるようにする
 
----
+対象ファイル：`src/features/KnowledgeListFeature.tsx`
 
-## Step 4: Controller で作成と保存をつなぐ
+- [ ] 各ナレッジを `/knowledges/${knowledge.knowledgeId}` へのリンクにする
+- [ ] ID だけでなく、本文の先頭部分など内容が分かる文字も表示する
 
-### なぜ必要か
+### 3-5. テストを追加する
 
-画面から受け取った本文をモデルでナレッジに変換し、Repositoryで保存する処理をひとまとめにします。
+- [ ] Controller のテストで、指定 ID のナレッジが画面へ渡されることを確認する
+- [ ] Router のテストで、詳細ページが `200` になることを確認する
+- [ ] Router のテストで、存在しない ID が `404` になることを確認する
+- [ ] UUID ではない ID が `404` になり、`storage` の外を参照しないことを確認する
+- [ ] 作成者には編集・削除操作が表示されることを確認する
+- [ ] 作成者以外には編集・削除操作が表示されないことを確認する
 
-### 変更するファイル
+## 4. ナレッジ更新を実装する
 
-- `src/controllers/get-create-knowledge.controller.tsx`（新規）
-- `src/controllers/create-knowledge.controller.ts`（新規）
-- 必要に応じて各Controllerのテストファイル
+`Knowledge.update` と、空白を拒否するモデルのテストはすでにあります。ここでは、それを画面から呼び出せるようにします。
 
-### やること
+### 4-1. 編集画面を作る
 
-- [ ] GET用Controllerで、Step 3の空の作成画面を返す
-- [ ] POST用Controllerは `content` と `userId` を引数で受け取る
-- [ ] `Knowledge.create(content, userId)` でナレッジを作る
-- [ ] 作ったナレッジを `KnowledgeRepository.upsert` へ渡す
-- [ ] 保存できたナレッジを呼び出し元へ返す
-- [ ] 空の本文では保存処理が呼ばれないことをテストする
-- [ ] 正常時は本文とユーザーIDが保存処理へ渡ることをテストする
+新規ファイル：`src/features/KnowledgeEditFeature.tsx`
 
-```text
-本文とユーザーIDを受け取る
-    ↓
-Knowledge.create でデータを作る
-    ↓
-KnowledgeRepository.upsert で保存する
-```
+- [ ] Props として `knowledge`、任意の `content`、任意の `errorMessage` を受け取る
+- [ ] `<textarea name="content">` に、`content` があればその値を、なければ現在の本文を入れる
+- [ ] form の送信先を `/knowledges/${knowledge.knowledgeId}` にする
+- [ ] form の `method` を `post` にする
+- [ ] 「保存する」ボタンと詳細へ戻るリンクを置く
+- [ ] エラー時にも入力した本文を残せる Props の形にする
 
-### 重要な注意点
+### 4-2. 編集画面表示コントローラーを作る
 
-作成者の `userId` はフォームから受け取ってはいけません。フォーム値はユーザーが書き換えられるためです。ログイン処理が `Context` に設定した `userId` をRouterからControllerへ渡します。
+新規ファイル：`src/controllers/get-edit-knowledge.controller.tsx`
 
-ControllerはHonoの `Context` を直接受け取りません。HTTP処理は次のStepの `router.ts` が担当します。
+- [ ] `knowledgeId` を使って対象を取得する
+- [ ] `knowledge.authorId` とログイン中の `userId` を比較する
+- [ ] 作成者でなければ `ForbiddenKnowledgeOperationError` のような専用エラーを投げる
+- [ ] 作成者なら `KnowledgeEditFeature` を返す
 
----
+画面上で編集リンクを隠すだけでは不十分です。URL を直接入力できるため、必ず Controller 側でも作成者を確認します。
 
-## Step 5: URL と作成処理を Router でつなぐ
+### 4-3. 更新コントローラーを作る
 
-### なぜ必要か
+新規ファイル：`src/controllers/update-knowledge.controller.ts`
 
-ここまでに作った画面と保存処理を、ブラウザーからアクセスできるURLへ割り当てます。
+- [ ] `knowledgeId`、新しい `content`、ログイン中の `userId` を受け取る
+- [ ] 対象ナレッジを取得する
+- [ ] 作成者 ID を照合し、本人でなければ専用エラーを投げる
+- [ ] `Knowledge.update(knowledge, content)` で更新後のモデルを作る
+- [ ] `KnowledgeRepository.upsert(updatedKnowledge)` で保存する
+- [ ] 更新後の `Knowledge` を返す
 
-### 変更するファイル
+作成者 ID はブラウザから送信された値を信用せず、保存済みナレッジと `ctx.get('userId')` を比較します。
 
-- `src/router.ts`
-- `src/features/KnowledgeListFeature.tsx`
+### 4-4. 更新ルートを追加する
 
-### やること
+対象ファイル：`src/router.ts`
 
-#### 作成画面を表示するGET処理
-
-- [ ] `GET /knowledges/new` を追加する
-- [ ] GET用Controllerが返した作成画面を `ctx.html(...)` で返す
-
-#### フォームを受け取るPOST処理
-
-- [ ] `POST /knowledges` を追加する
-- [ ] `await ctx.req.parseBody()` でフォームデータを読む
+- [ ] `GET /knowledges/:knowledgeId/edit` で編集画面を返す
+- [ ] `POST /knowledges/:knowledgeId` でフォームを受け取る
 - [ ] `content` が文字列か確認する
-- [ ] `ctx.get('userId')` でログイン中のユーザーIDを得る
-- [ ] `content` と `userId` をPOST用Controllerへ渡す
-- [ ] 保存成功後は `303 See Other` で `/` へリダイレクトする
-- [ ] 本文がない、または空白だけなら、入力値とエラー文付きのフォームを `400 Bad Request` で返す
+- [ ] 更新成功後は詳細画面へ `303` でリダイレクトする
+- [ ] `InvalidKnowledgeContentError` の場合は、入力内容とエラー文を付けた編集画面を `400` で返す
+- [ ] 対象がなければ `404`、本人でなければ `403` を返す
 
-#### 一覧から作成画面へのリンク
+### 4-5. 更新のテストを追加する
 
-- [ ] `KnowledgeListFeature` に「ナレッジを作成」リンクを追加する
-- [ ] リンク先を `/knowledges/new` にする
+- [ ] 本人なら本文を更新できる
+- [ ] 更新後も ID、作成者、作成日時は変わらない
+- [ ] 更新日時が新しくなる
+- [ ] 空白だけの本文では更新できない
+- [ ] 他人のナレッジは更新できない
+- [ ] 成功時に詳細 URL へ `303` でリダイレクトされる
+- [ ] 不正入力時は `400` になり、入力した本文が再表示される
+- [ ] 対象がなければ `404` になる
 
-### 用語の説明
+## 5. ナレッジ削除を実装する
 
-- `GET`: 画面やデータを取得するときの通信
-- `POST`: 入力データを送るときの通信
-- `400 Bad Request`: 入力内容に問題があることを示すHTTPステータス
-- `303 See Other`: POST完了後に別画面へ移動させるHTTPステータス
-- リダイレクト: サーバーがブラウザーへ別のURLを開くよう指示すること
+### 5-1. 削除確認 UI を詳細画面に置く
 
-POST後に一覧へリダイレクトすることで、再読み込み時の二重投稿を防ぎます。この方法を Post/Redirect/Get と呼びます。
+対象ファイル：`src/features/KnowledgeDetailFeature.tsx`
 
----
+- [ ] 作成者にだけ削除用の `<form>` を表示する
+- [ ] 送信先を `/knowledges/${knowledge.knowledgeId}/delete` にする
+- [ ] `method="post"` を指定する
+- [ ] 誤操作を減らすため、確認画面またはブラウザの確認ダイアログを用意するかチームで決める
 
-## Step 6: 機能全体をテストする
+JavaScript なしで確実に作る場合は、別の `GET /knowledges/:knowledgeId/delete` 確認画面を追加してから削除する方法があります。
 
-### 自動テスト
+### 5-2. 削除コントローラーを作る
 
-- [ ] 必要に応じて `src/router.test.ts` を新しく作る
-- [ ] `GET /knowledges/new` が `200 OK` と作成フォームを返すことを確認する
-- [ ] 正常な本文をPOSTすると `303 See Other` を返すことを確認する
-- [ ] 保存されたJSONの `content` と `authorId` を確認する
-- [ ] 空の本文をPOSTすると `400 Bad Request` を返し、保存しないことを確認する
+新規ファイル：`src/controllers/delete-knowledge.controller.ts`
+
+- [ ] `knowledgeId` とログイン中の `userId` を受け取る
+- [ ] 削除前に対象ナレッジを取得する
+- [ ] 作成者 ID を照合し、本人でなければ専用エラーを投げる
+- [ ] 本人なら `KnowledgeRepository.deleteByKnowledgeId(knowledgeId)` を呼ぶ
+
+削除の前に取得するのは、存在確認だけでなく所有者確認を行うためです。
+
+### 5-3. 削除ルートを追加する
+
+対象ファイル：`src/router.ts`
+
+- [ ] `POST /knowledges/:knowledgeId/delete` を追加する
+- [ ] 削除成功後は一覧画面へ `303` でリダイレクトする
+- [ ] 対象がなければ `404`、本人でなければ `403` を返す
+
+### 5-4. 削除のテストを追加する
+
+- [ ] 本人なら削除できる
+- [ ] 削除後は ID で取得できない
+- [ ] 他人のナレッジは削除できない
+- [ ] 成功時に一覧 URL へ `303` でリダイレクトされる
+- [ ] 対象がなければ `404` になる
+
+## 6. 重複を整理する
+
+3 機能を動かしてから、分かりやすさを保てる範囲で重複をまとめます。
+
+- [ ] 所有者確認が更新・削除で重複する場合、小さな関数にまとめる
+- [ ] `404`、`403`、入力エラーの変換が Router 内で読みにくくなった場合、エラー処理関数にまとめる
+- [ ] 日時表示が複数箇所にある場合、表示用関数にまとめる
+- [ ] 未使用の import、仮実装、Biome の無視コメントを削除する
+- [ ] 各関数が「取得」「権限確認」「更新」など理解しやすい順序になっているか確認する
+
+権限エラーは `src/models` のドメインルールとして置くか、`src/controllers` の共通ファイルに置くかをチームで決めます。今回の「本人だけ更新・削除できる」という要件を一か所で表現できる場所を選びます。
+
+## 7. 全体を確認する
+
 - [ ] すべてのテストを実行する
 
-```sh
-npm test
-```
+  ```sh
+  npm test
+  ```
 
-### コード品質とビルドの確認
+- [ ] 型チェック、コード整形、CSS ビルドを含む全体ビルドを実行する
 
-```sh
-npm run build
-```
+  ```sh
+  npm run build
+  ```
 
-このコマンドで、コード書式、TypeScriptの型、CSS生成をまとめて確認できます。
+- [ ] 開発用ユーザーを指定して起動する
 
-### ブラウザーでの確認
+  ```sh
+  npm start -- "test-user"
+  ```
 
-```sh
-npm start -- "test-user"
-```
+- [ ] ブラウザで次の操作を手動確認する
 
-`http://localhost:8080` を開き、次を確認します。
+  1. 一覧から詳細画面へ移動できる
+  2. 本文と投稿者情報が表示される
+  3. 自分の投稿だけ編集できる
+  4. 空白だけの本文には更新できない
+  5. 更新した本文が詳細画面へ反映される
+  6. 自分の投稿だけ削除できる
+  7. 削除後に一覧から消える
+  8. 存在しない ID の URL は `404` になる
 
-- [ ] 一覧に「ナレッジを作成」リンクがある
-- [ ] リンクから作成画面へ移動できる
-- [ ] Markdownを入力して作成できる
-- [ ] 作成後に一覧へ戻る
-- [ ] `storage` にJSONファイルが作られている
-- [ ] JSONの `authorId` が `test-user` になっている
-- [ ] 空白だけの本文は保存されない
-- [ ] エラー時も入力した本文が画面に残る
+- [ ] 別ユーザーでも起動し、自分以外の投稿を更新・削除できないことを確認する
 
-確認用のJSONはそのファイルだけを削除します。`storage` フォルダー全体や `.gitignore` は削除しません。
+  ```sh
+  npm start -- "another-user"
+  ```
 
----
+起動中のサーバーを一度終了してから、別ユーザーで起動し直します。
 
-## 完了チェックリスト
+## 8. 完了条件
 
-- [ ] Markdown本文を入力する画面がある
-- [ ] ログイン中のユーザーIDでナレッジを作成できる
-- [ ] `storage/<knowledgeId>.json` にデータが保存される
-- [ ] 空または空白だけの本文は保存されない
-- [ ] 入力エラー時に本文が消えない
-- [ ] 保存後は303リダイレクトで一覧へ戻る
-- [ ] モデル、Repository、Controller、Routerのテストが通る
-- [ ] `npm test` が成功する
-- [ ] `npm run build` が成功する
+- [ ] 誰でもナレッジ詳細を閲覧できる
+- [ ] 投稿者本人だけがナレッジを更新できる
+- [ ] 投稿者本人だけがナレッジを削除できる
+- [ ] URL の直接入力や手作りしたリクエストでも権限を回避できない
+- [ ] 存在しないナレッジに `404` を返す
+- [ ] 権限がない操作に `403` を返す
+- [ ] 不正な本文に `400` を返し、分かりやすいメッセージを表示する
+- [ ] モデルとリポジトリに単体テストがある
+- [ ] Controller と Router の主要な成功・失敗パターンにテストがある
+- [ ] `npm test` と `npm run build` が成功する
+
+## おすすめのコミット単位
+
+作業を小さく記録すると、レビューと問題の切り分けがしやすくなります。
+
+1. `KnowledgeRepository` の取得・削除とテスト
+2. 詳細画面、Controller、Router、テスト
+3. 編集画面、更新 Controller、Router、テスト
+4. 削除 Controller、Router、テスト
+5. 重複整理、見た目調整、全体確認
