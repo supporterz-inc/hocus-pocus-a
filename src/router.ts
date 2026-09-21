@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
+// import { createKnowledge, createKnowledgeController } from './controllers/create-knowledge.controller.js';
 import { getAllKnowledgesController } from './controllers/get-all-knowledges.controller.js';
-import { createKnowledge, createKnowledgeController } from './controllers/create-knowledge.controller.js'
 
 export interface Variables {
   /**
@@ -26,10 +26,10 @@ router.get('/', (ctx) => {
   return ctx.html(getAllKnowledgesController(userName));
 });
 
-router.get('/new', (ctx) => {
-  return ctx.html(createKnowledgeController())
-})
+// router.get('/new', (ctx) => {
+//   // return ctx.html(createKnowledgeController());
+// });
 
-router.post('/new', (ctx) => {
-  
-})
+// router.post('/new', (ctx) => {
+
+// })
