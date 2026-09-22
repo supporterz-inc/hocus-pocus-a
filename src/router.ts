@@ -29,7 +29,3 @@ router.get('/', (ctx) => {
 router.get('/new', (ctx) => {
   return ctx.html(createKnowledgeController());
 });
-
-// router.post('/new', (ctx) => {
-
-// })
