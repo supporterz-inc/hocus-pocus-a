@@ -1,5 +1,3 @@
-// export function CreateKnowledgeFeature() {
-//   return (
-
-//   )
-// }
+export function CreateKnowledgeFeature() {
+  return <p></p>;
+}
