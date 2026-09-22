@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { createKnowledgeController, saveKnowledgeController } from './controllers/create-knowledge.controller.js';
+import { detailKnowledgeController } from './controllers/detail-knowledge.controller.js';
 import { getAllKnowledgesController } from './controllers/get-all-knowledges.controller.js';
 
 export interface Variables {
@@ -37,4 +38,9 @@ router.post('/new', async (ctx) => {
   await saveKnowledgeController(content, userId);
 
   return ctx.redirect('/');
+});
+
+router.get('/knowledges/:id', (ctx) => {
+  const id = ctx.req.param('id');
+  return ctx.html(detailKnowledgeController(id));
 });
