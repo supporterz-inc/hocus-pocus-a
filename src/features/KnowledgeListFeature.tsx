@@ -10,7 +10,7 @@ export function KnowledgeListFeature({ userName, knowledges }: Props) {
   return (
     <Layout title="ナレッジ一覧">
       <p>
-        こんにちは <span class="text-blue-500 font-bold">{userName}</span> さん
+        こんにちは <span class="text-yellow-500 font-bold">{userName}</span> さん
       </p>
       {knowledges.length ? (
         <ul>
