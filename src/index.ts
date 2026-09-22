@@ -33,6 +33,9 @@ app.use(
 
 app.use(trimTrailingSlash());
 
+app.use('/vendor/marked.js', serveStatic({ path: 'node_modules/marked/lib/marked.esm.js' }));
+app.use('/vendor/purify.js', serveStatic({ path: 'node_modules/dompurify/dist/purify.es.mjs' }));
+
 app.use('*', async (ctx, next) => {
   const iapJwt = ctx.req.header('Cf-Access-Jwt-Assertion')!;
   const cookie = ctx.req.header('Cookie');
@@ -45,14 +48,15 @@ app.use('*', async (ctx, next) => {
       });
 
       ctx.set('userId', payload.sub!);
+      ctx.set('userName', await getUserName(cookie));
     } catch {
       throw new HTTPException(401, { message: `IAP-JWT is Unauthorized :(\n\n${JSON.stringify(iapJwt, null, 2)}` });
     }
   } else {
+    // MEMO: ローカル実行時は IAP の Cookie が無いため、引数の値を ID と表示名の双方に用いる
     ctx.set('userId', useDebugUser);
+    ctx.set('userName', useDebugUser);
   }
-
-  ctx.set('userName', await getUserName(cookie));
 
   await next();
 });

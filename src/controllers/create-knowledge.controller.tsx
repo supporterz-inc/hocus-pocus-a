@@ -1,5 +1,5 @@
-// import { CreateKnowledgeFeature } from '../features/CreateKnowledgeFeature.js';
+import { CreateKnowledgeFeature } from '../features/CreateKnowledgeFeature.js';
 
-// export function createKnowledgeController() {
-//   return <CreateKnowledgeFeature />;
-// }
+export function createKnowledgeController() {
+  return <CreateKnowledgeFeature />;
+}
