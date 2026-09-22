@@ -55,7 +55,7 @@ export function CreateKnowledgeFeature() {
           </div>
 
           <button
-            class="w-full rounded-lg bg-blue-500 py-2xs text-base font-bold text-white active:bg-blue-500/80 hover: text-amber-50"
+            class="w-full rounded-lg bg-blue-500 py-2xs text-base font-bold text-white active:bg-blue-500/80 hover:text-amber-50"
             type="submit"
           >
             投稿する
