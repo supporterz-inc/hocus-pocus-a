@@ -2,6 +2,10 @@ import { Hono } from 'hono';
 import { createKnowledgeController, saveKnowledgeController } from './controllers/create-knowledge.controller.js';
 import { detailKnowledgeController } from './controllers/detail-knowledge.controller.js';
 import { getAllKnowledgesController } from './controllers/get-all-knowledges.controller.js';
+import {
+  saveUpdatedKnowledgeController,
+  updateKnowledgeController,
+} from './controllers/update-knowledge.controller.js';
 import { isUUID } from './utils/is-uuid.js';
 
 export interface Variables {
@@ -38,7 +42,7 @@ router.post('/new', async (ctx) => {
 
   await saveKnowledgeController(content, userId);
 
-  return ctx.redirect('/');
+  return ctx.redirect('/', 303);
 });
 
 router.get('/knowledges/:id', async (ctx) => {
@@ -48,4 +52,28 @@ router.get('/knowledges/:id', async (ctx) => {
   }
 
   return ctx.html(detailKnowledgeController(id));
+});
+
+router.get('/knowledges/:id/edit', async (ctx) => {
+  const id = ctx.req.param('id');
+  if (!isUUID(id)) {
+    return ctx.text('不正な値です', 400);
+  }
+  const userId = ctx.get('userId');
+
+  return ctx.html(await updateKnowledgeController(id, userId));
+});
+
+router.patch('/knowledges/:id', async (ctx) => {
+  const id = ctx.req.param('id');
+  if (!isUUID(id)) {
+    return ctx.text('不正な値です', 400);
+  }
+
+  const { content } = await ctx.req.parseBody<{ content: string }>();
+  const userId = ctx.get('userId');
+
+  await saveUpdatedKnowledgeController(id, content, userId);
+
+  return ctx.redirect(`/knowledges/${id}`, 303);
 });
