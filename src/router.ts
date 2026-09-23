@@ -50,8 +50,9 @@ router.get('/knowledges/:id', async (ctx) => {
   if (!isUUID(id)) {
     return ctx.text('不正な値です', 400);
   }
+  const userId = ctx.get('userId');
 
-  return ctx.html(detailKnowledgeController(id));
+  return ctx.html(detailKnowledgeController(id, userId));
 });
 
 router.get('/knowledges/:id/edit', async (ctx) => {

@@ -33,9 +33,10 @@ function DateTime({ unixSeconds }: { unixSeconds: number }) {
 
 interface Props {
   knowledge: Knowledge;
+  isEditable: boolean;
 }
 
-export function DetailKnowledgeFeature({ knowledge }: Props) {
+export function DetailKnowledgeFeature({ knowledge, isEditable }: Props) {
   return (
     <Layout title="ナレッジ詳細">
       <div class="flex flex-col gap-m p-s">
@@ -73,6 +74,17 @@ export function DetailKnowledgeFeature({ knowledge }: Props) {
             <DateTime unixSeconds={knowledge.updatedAt} />
           </dd>
         </dl>
+
+        {isEditable && (
+          <div class="flex justify-end gap-2xs">
+            <a
+              class="rounded-md bg-blue-500 px-s py-3xs text-sm font-bold text-white active:bg-blue-500/80 hover:bg-blue-600"
+              href={`/knowledges/${knowledge.knowledgeId}/edit`}
+            >
+              編集
+            </a>
+          </div>
+        )}
       </div>
 
       <script dangerouslySetInnerHTML={{ __html: renderScript }} type="module" />
