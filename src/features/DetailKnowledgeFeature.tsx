@@ -41,7 +41,7 @@ export function DetailKnowledgeFeature({ knowledge }: Props) {
       <div class="flex flex-col gap-m p-s">
         <header class="flex items-baseline justify-between">
           <h1 class="text-xl font-bold text-gray-900">ナレッジ詳細</h1>
-          <a class="text-xs text-blue-500" href="/">
+          <a class="text-xs text-blue-500 hover:text-blue-600" href="/">
             一覧へ
           </a>
         </header>
