@@ -28,7 +28,7 @@ export function CreateKnowledgeFeature() {
       <div class="flex flex-col gap-m p-s">
         <header class="flex items-baseline justify-between">
           <h1 class="text-xl font-bold text-gray-900">ナレッジ作成</h1>
-          <a class="text-xs text-blue-500" href="/">
+          <a class="text-xs text-blue-500 hover:text-blue-600" href="/">
             一覧へ
           </a>
         </header>
@@ -55,7 +55,7 @@ export function CreateKnowledgeFeature() {
           </div>
 
           <button
-            class="w-full rounded-lg bg-blue-500 py-2xs text-base font-bold text-white active:bg-blue-500/80 hover:text-amber-50"
+            class="w-full rounded-lg bg-blue-500 py-2xs text-base font-bold text-white active:bg-blue-500/80 hover:bg-blue-600 cursor-pointer"
             type="submit"
           >
             投稿する
