@@ -2,6 +2,7 @@ import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+import { methodOverride } from 'hono/method-override';
 import { trimTrailingSlash } from 'hono/trailing-slash';
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 import { router, type Variables } from './router.js';
@@ -32,6 +33,7 @@ app.use(
 );
 
 app.use(trimTrailingSlash());
+app.use(methodOverride({ app }));
 
 app.use('/vendor/marked.js', serveStatic({ path: 'node_modules/marked/lib/marked.esm.js' }));
 app.use('/vendor/purify.js', serveStatic({ path: 'node_modules/dompurify/dist/purify.es.mjs' }));
