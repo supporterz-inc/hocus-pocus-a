@@ -73,7 +73,19 @@ function update(self: Knowledge, content: Knowledge['content']): Knowledge {
   };
 }
 
+/**
+ * ナレッジが指定したユーザーによって作成されたかを判定する
+ *
+ * @param knowledge 判定対象のナレッジ
+ * @param userId 判定するユーザーの ID
+ * @returns 作成者であれば true
+ */
+function isAuthoredBy(self: Knowledge, userId: Knowledge['authorId']): boolean {
+  return self.authorId === userId;
+}
+
 export const Knowledge = {
   create,
   update,
+  isAuthoredBy,
 };
