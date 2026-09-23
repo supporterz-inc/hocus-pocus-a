@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { createKnowledgeController, saveKnowledgeController } from './controllers/create-knowledge.controller.js';
 import { detailKnowledgeController } from './controllers/detail-knowledge.controller.js';
 import { getAllKnowledgesController } from './controllers/get-all-knowledges.controller.js';
+import { isUUID } from './utils/is-uuid.js';
 
 export interface Variables {
   /**
@@ -40,7 +41,11 @@ router.post('/new', async (ctx) => {
   return ctx.redirect('/');
 });
 
-router.get('/knowledges/:id', (ctx) => {
+router.get('/knowledges/:id', async (ctx) => {
   const id = ctx.req.param('id');
+  if (!isUUID(id)) {
+    return ctx.text('不正な値です', 400);
+  }
+
   return ctx.html(detailKnowledgeController(id));
 });
