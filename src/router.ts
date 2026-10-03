@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { createKnowledgeController } from './controllers/create-knowledge.controller.js';
 import { getAllKnowledgesController } from './controllers/get-all-knowledges.controller.js';
 
 export interface Variables {
@@ -16,11 +17,21 @@ export interface Variables {
 export const router = new Hono<{ Variables: Variables }>();
 
 router.get('/', (ctx) => {
-  // MEMO: `ctx.get(keyof Variables)` によって、必要に応じて値を利用できる
   const userId = ctx.get('userId');
   const userName = ctx.get('userName');
   console.log(`Signed-in : ${userName} (${userId})`);
-
-  // MEMO: Controller は Context を直接受け取らず、必要な情報のみを引数に受け取る
   return ctx.html(getAllKnowledgesController(userName));
+});
+
+router.post('/knowledges', async (ctx) => {
+  const { content } = await ctx.req.parseBody();
+
+  try {
+    if (typeof content !== 'string') throw new Error('本文が不正です');
+    await createKnowledgeController(content, ctx.get('userId'));
+  } catch {
+    return ctx.html(getAllKnowledgesController(ctx.get('userName')), 400);
+  }
+
+  return ctx.redirect('/', 303);
 });
