@@ -51,3 +51,20 @@ describe('Update Knowledge', () => {
     expect(updated.updatedAt).toBeGreaterThan(original.updatedAt);
   });
 });
+
+describe('Short ID of Knowledge', () => {
+  it('knowledgeId の先頭のハイフンまでを返す', () => {
+    const knowledge = {
+      ...Knowledge.create('content', 'test-author'),
+      knowledgeId: '100e75a9-290e-4ed8-b9a4-88854f41ba5e',
+    };
+
+    expect(Knowledge.toShortId(knowledge)).toBe('100e75a9');
+  });
+
+  it('新規作成したナレッジの短い ID は 16 進数 8 文字になる', () => {
+    const knowledge = Knowledge.create('content', 'test-author');
+
+    expect(Knowledge.toShortId(knowledge)).toMatch(/^[0-9a-f]{8}$/);
+  });
+});

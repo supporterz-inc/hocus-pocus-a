@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { createKnowledgeController } from './controllers/create-knowledge.controller.js';
-import { getAllKnowledgesController } from './controllers/get-all-knowledges.controller.js';
+import { getAllKnowledgesController, getKnowledgeDetailController } from './controllers/get-knowledges.controller.js';
 
 export interface Variables {
   /**
@@ -34,4 +34,10 @@ router.post('/knowledges', async (ctx) => {
   }
 
   return ctx.redirect('/', 303);
+});
+
+router.get('/knowledges/:shortId{[0-9a-f]{8}}', async (ctx) => {
+  const page = await getKnowledgeDetailController(ctx.req.param('shortId'));
+
+  return page ? ctx.html(page) : ctx.notFound();
 });

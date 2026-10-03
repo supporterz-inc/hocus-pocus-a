@@ -78,7 +78,18 @@ function update(self: Knowledge, content: Knowledge['content']): Knowledge {
   };
 }
 
+/**
+ * 詳細ページの URL に用いる短い ID (knowledgeId の先頭のハイフンまで) を返す
+ *
+ * @param self 対象のナレッジ
+ * @returns 短い ID
+ */
+function toShortId(self: Knowledge): string {
+  return self.knowledgeId.split('-')[0] ?? self.knowledgeId;
+}
+
 export const Knowledge = {
   create,
   update,
+  toShortId,
 };
