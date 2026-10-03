@@ -1,4 +1,4 @@
-import { Knowledge } from '../models/knowledge.model.js';
+import type { Knowledge } from '../models/knowledge.model.js';
 import { Layout } from './Layout.js';
 
 interface ListProps {
@@ -28,13 +28,16 @@ export function KnowledgeListFeature({ userName, knowledges }: ListProps) {
 
       {knowledges.length ? (
         <ul>
-          {knowledges.map((knowledge) => (
-            <li key={knowledge.knowledgeId}>
-              <a class="text-blue-600 underline" href={`/knowledges/${Knowledge.toShortId(knowledge)}`}>
-                {Knowledge.toShortId(knowledge)}
-              </a>
-            </li>
-          ))}
+          {knowledges
+            .toSorted((a, b) => a.createdAt - b.createdAt)
+            .map((knowledge) => (
+              <li class="flex gap-2 py-1" key={knowledge.knowledgeId}>
+                <a class="flex-1 truncate text-blue-600 underline" href={`/knowledges/${knowledge.knowledgeId}`}>
+                  {knowledge.knowledgeId}
+                </a>
+                <span class="text-sm text-gray-500">{formatDate(knowledge.createdAt)}</span>
+              </li>
+            ))}
         </ul>
       ) : (
         <ul>

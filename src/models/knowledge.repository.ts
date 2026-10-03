@@ -12,10 +12,8 @@ async function getAll(): Promise<Knowledge[]> {
   return Promise.all(files.map(readKnowledge));
 }
 
-async function getByShortId(shortId: string): Promise<Knowledge | undefined> {
-  const [file] = await Array.fromAsync(glob(`./storage/${shortId}-*.json`));
-
-  return file ? readKnowledge(file) : undefined;
+function getByKnowledgeId(knowledgeId: string): Promise<Knowledge | undefined> {
+  return readKnowledge(`./storage/${knowledgeId}.json`).catch(() => undefined);
 }
 
 async function upsert(knowledge: Knowledge): Promise<void> {
@@ -23,10 +21,7 @@ async function upsert(knowledge: Knowledge): Promise<void> {
 }
 
 export const KnowledgeRepository = {
-  // biome-ignore lint/suspicious/noExplicitAny: TODO: (学生向け) 実装する
-  getByKnowledgeId: (_: string): Promise<Knowledge> => undefined as any,
-
-  getByShortId,
+  getByKnowledgeId,
 
   // biome-ignore lint/suspicious/noExplicitAny: TODO: (学生向け) 実装する
   getByAuthorId: (_: string): Promise<Knowledge[]> => undefined as any,

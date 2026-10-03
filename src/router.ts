@@ -36,8 +36,8 @@ router.post('/knowledges', async (ctx) => {
   return ctx.redirect('/', 303);
 });
 
-router.get('/knowledges/:shortId{[0-9a-f]{8}}', async (ctx) => {
-  const page = await getKnowledgeDetailController(ctx.req.param('shortId'));
+router.get('/knowledges/:knowledgeId{[0-9a-f-]{36}}', async (ctx) => {
+  const page = await getKnowledgeDetailController(ctx.req.param('knowledgeId'));
 
   return page ? ctx.html(page) : ctx.notFound();
 });
