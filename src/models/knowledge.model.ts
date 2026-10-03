@@ -38,6 +38,10 @@ export interface Knowledge {
   readonly updatedAt: number;
 }
 
+function assertValidContent(content: string): void {
+  if (content.trim() === '') throw new Error('ナレッジの本文が空です');
+}
+
 /**
  * ナレッジを新規作成する
  *
@@ -46,6 +50,7 @@ export interface Knowledge {
  * @returns 新規作成されたナレッジ
  */
 function create(content: Knowledge['content'], authorId: Knowledge['authorId']): Knowledge {
+  assertValidContent(content);
   const now = Math.floor(Date.now() / 1000);
 
   return {

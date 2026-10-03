@@ -17,6 +17,22 @@ describe('Create Knowledge', () => {
   });
 });
 
+it.each([
+  ['空文字', ''],
+  ['半角スペースのみ', '   '],
+  ['全角スペースのみ', '　　'],
+  ['改行・タブのみ', '\n\t\n'],
+])('本文が%sの場合は作成できない', (_, content) => {
+  expect(() => Knowledge.create(content, 'test-author')).toThrow();
+});
+
+it('前後に空白があっても本文があれば作成でき、本文はそのまま保持される', () => {
+  const content = '  This is a test content.  ';
+  const knowledge = Knowledge.create(content, 'test-author');
+
+  expect(knowledge.content).toBe(content);
+});
+
 describe('Update Knowledge', () => {
   it('Knowledge が更新できる', () => {
     vi.useFakeTimers();
