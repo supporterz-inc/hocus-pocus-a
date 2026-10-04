@@ -50,4 +50,13 @@ describe('Update Knowledge', () => {
     expect(updated.createdAt).toEqual(original.createdAt);
     expect(updated.updatedAt).toBeGreaterThan(original.updatedAt);
   });
+
+  it.each([
+    ['空文字', ''],
+    ['空白のみ', ' 　\n\t'],
+  ])('本文が%sの場合は更新できない', (_, content) => {
+    const original = Knowledge.create('This is an original content', 'test-author');
+
+    expect(() => Knowledge.update(original, content)).toThrow();
+  });
 });
