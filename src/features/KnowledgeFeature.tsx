@@ -99,7 +99,7 @@ export function KnowledgeDetailFeature({ knowledge, userId }: DetailProps) {
       </dl>
 
       <div class="whitespace-pre-wrap wrap-break-word border rounded p-2">
-        {knowledge.authorId === userId && (
+        {knowledge.authorId === userId ? (
           <form action={`/knowledges/${knowledge.knowledgeId}/update`} method="post">
             <textarea class="w-full border rounded p-2" name="content" required rows={12}>
               {knowledge.content}
@@ -108,6 +108,8 @@ export function KnowledgeDetailFeature({ knowledge, userId }: DetailProps) {
               更新する
             </button>
           </form>
+        ) : (
+          knowledge.content
         )}
       </div>
     </Layout>
