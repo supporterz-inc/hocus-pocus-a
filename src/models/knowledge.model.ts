@@ -21,6 +21,11 @@ export interface Knowledge {
   readonly authorId: string;
 
   /**
+   * ナレッジのタイトル
+   */
+  readonly title: string;
+
+  /**
    * ナレッジの本文 (Markdown)
    *
    * @todo (学生向け) 空白の場合は不正な Knowledge とみなす
@@ -42,20 +47,27 @@ function assertValidContent(content: string): void {
   if (content.trim() === '') throw new Error('ナレッジの本文が空です');
 }
 
+function assertValidTitle(title: string): void {
+  if (title.trim() === '') throw new Error('ナレッジのタイトルが空です');
+}
+
 /**
  * ナレッジを新規作成する
  *
+ * @param title ナレッジのタイトル
  * @param content ナレッジの本文
  * @param authorId ナレッジの作成者の ID
  * @returns 新規作成されたナレッジ
  */
-function create(content: Knowledge['content'], authorId: Knowledge['authorId']): Knowledge {
+function create(title: Knowledge['title'], content: Knowledge['content'], authorId: Knowledge['authorId']): Knowledge {
+  assertValidTitle(title);
   assertValidContent(content);
   const now = Math.floor(Date.now() / 1000);
 
   return {
     __tag: 'Knowledge',
     knowledgeId: randomUUID(),
+    title,
     content,
     authorId,
     createdAt: now,
@@ -67,14 +79,17 @@ function create(content: Knowledge['content'], authorId: Knowledge['authorId']):
  * ナレッジを更新する
  *
  * @param knowledge 更新対象のナレッジ
+ * @param title 新しいナレッジのタイトル
  * @param content 新しいナレッジの本文
  * @returns 更新されたナレッジ
  */
-function update(self: Knowledge, content: Knowledge['content']): Knowledge {
+function update(self: Knowledge, title: Knowledge['title'], content: Knowledge['content']): Knowledge {
+  assertValidTitle(title);
   assertValidContent(content);
 
   return {
     ...self,
+    title,
     content,
     updatedAt: Math.floor(Date.now() / 1000),
   };

@@ -7,11 +7,13 @@ afterEach(() => {
 
 describe('Create Knowledge', () => {
   it('Knowledge が作成できる', () => {
+    const title = 'Test title';
     const content = 'This is a test content.';
     const authorId = 'test-author';
-    const knowledge = Knowledge.create(content, authorId);
+    const knowledge = Knowledge.create(title, content, authorId);
 
     expect(knowledge.content).toBe(content);
+    expect(knowledge.title).toBe(title);
     expect(knowledge.authorId).toBe(authorId);
     expect(knowledge.createdAt).toEqual(knowledge.updatedAt);
   });
@@ -23,12 +25,21 @@ it.each([
   ['全角スペースのみ', '　　'],
   ['改行・タブのみ', '\n\t\n'],
 ])('本文が%sの場合は作成できない', (_, content) => {
-  expect(() => Knowledge.create(content, 'test-author')).toThrow();
+  expect(() => Knowledge.create('Test title', content, 'test-author')).toThrow();
+});
+
+it.each([
+  ['空文字', ''],
+  ['半角スペースのみ', '   '],
+  ['全角スペースのみ', '　　'],
+  ['改行・タブのみ', '\n\t\n'],
+])('タイトルが%sの場合は作成できない', (_, title) => {
+  expect(() => Knowledge.create(title, 'This is a test content.', 'test-author')).toThrow();
 });
 
 it('前後に空白があっても本文があれば作成でき、本文はそのまま保持される', () => {
   const content = '  This is a test content.  ';
-  const knowledge = Knowledge.create(content, 'test-author');
+  const knowledge = Knowledge.create('Test title', content, 'test-author');
 
   expect(knowledge.content).toBe(content);
 });
@@ -37,15 +48,16 @@ describe('Update Knowledge', () => {
   it('Knowledge が更新できる', () => {
     vi.useFakeTimers();
 
-    const original = Knowledge.create('This is an original content', 'test-author');
+    const original = Knowledge.create('Test title', 'This is an original content', 'test-author');
     const content = 'This is an updated content.';
 
     vi.advanceTimersByTime(10000);
 
-    const updated = Knowledge.update(original, content);
+    const updated = Knowledge.update(original, '新しいタイトル', content);
 
     expect(updated.knowledgeId).toBe(original.knowledgeId);
     expect(updated.content).toBe(content);
+    expect(updated.title).toBe('新しいタイトル');
     expect(updated.authorId).toBe(original.authorId);
     expect(updated.createdAt).toEqual(original.createdAt);
     expect(updated.updatedAt).toBeGreaterThan(original.updatedAt);
@@ -55,8 +67,17 @@ describe('Update Knowledge', () => {
     ['空文字', ''],
     ['空白のみ', ' 　\n\t'],
   ])('本文が%sの場合は更新できない', (_, content) => {
-    const original = Knowledge.create('This is an original content', 'test-author');
+    const original = Knowledge.create('Test title', 'This is an original content', 'test-author');
 
-    expect(() => Knowledge.update(original, content)).toThrow();
+    expect(() => Knowledge.update(original, '新しいタイトル', content)).toThrow();
+  });
+
+  it.each([
+    ['空文字', ''],
+    ['空白のみ', ' 　\n\t'],
+  ])('タイトルが%sの場合は更新できない', (_, title) => {
+    const original = Knowledge.create('Test title', 'This is an original content', 'test-author');
+
+    expect(() => Knowledge.update(original, title, 'This is an updated content.')).toThrow();
   });
 });

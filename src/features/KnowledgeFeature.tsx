@@ -15,6 +15,7 @@ export function KnowledgeListFeature({ userId, userName, knowledges }: ListProps
       </p>
 
       <form action="/knowledges" class="my-4" method="post">
+        <input class="w-full border rounded p-2 mb-2" name="title" placeholder="タイトル" required type="text" />
         <textarea
           class="w-full border rounded p-2"
           name="content"
@@ -37,7 +38,7 @@ export function KnowledgeListFeature({ userId, userName, knowledges }: ListProps
                   class="min-w-0 flex-1 truncate text-blue-600 underline"
                   href={`/knowledges/${knowledge.knowledgeId}`}
                 >
-                  {knowledge.content}
+                  {knowledge.title}
                 </a>
 
                 {knowledge.authorId === userId && (
@@ -82,10 +83,12 @@ function formatDate(unixTime: number): string {
 
 export function KnowledgeDetailFeature({ knowledge, userId }: DetailProps) {
   return (
-    <Layout title="ナレッジ詳細">
+    <Layout title={knowledge.title}>
       <a class="text-blue-600 underline" href="/">
         ← 一覧に戻る
       </a>
+
+      <h1 class="mt-4 text-xl font-bold wrap-break-word">{knowledge.title}</h1>
 
       <dl class="my-4 text-sm text-gray-600">
         <dt>ID</dt>
@@ -101,6 +104,14 @@ export function KnowledgeDetailFeature({ knowledge, userId }: DetailProps) {
       <div class="whitespace-pre-wrap wrap-break-word border rounded p-2">
         {knowledge.authorId === userId ? (
           <form action={`/knowledges/${knowledge.knowledgeId}/update`} method="post">
+            <input
+              class="w-full border rounded p-2 mb-2"
+              name="title"
+              placeholder="タイトル"
+              required
+              type="text"
+              value={knowledge.title}
+            />
             <textarea class="w-full border rounded p-2" name="content" required rows={12}>
               {knowledge.content}
             </textarea>

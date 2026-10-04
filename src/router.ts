@@ -20,11 +20,11 @@ router.get('/', (ctx) => {
 });
 
 router.post('/knowledges', async (ctx) => {
-  const { content } = await ctx.req.parseBody();
+  const { title, content } = await ctx.req.parseBody();
 
   try {
-    if (typeof content !== 'string') throw new Error('本文が不正です');
-    await createKnowledgeController(content, ctx.get('userId'));
+    if (typeof content !== 'string' || typeof title !== 'string') throw new Error('入力が不正です');
+    await createKnowledgeController(title, content, ctx.get('userId'));
   } catch {
     return ctx.html(getAllKnowledgesController(ctx.get('userId'), ctx.get('userName')), 400);
   }
@@ -46,11 +46,10 @@ router.post('/knowledges/:knowledgeId{[0-9a-f-]{36}}/delete', async (ctx) => {
 
 router.post('/knowledges/:knowledgeId{[0-9a-f-]{36}}/update', async (ctx) => {
   const { knowledgeId } = ctx.req.param();
-  const { content } = await ctx.req.parseBody();
-
+  const { content, title } = await ctx.req.parseBody();
   try {
-    if (typeof content !== 'string') throw new Error('本文が不正です');
-    await updateKnowledgeController(knowledgeId, content, ctx.get('userId'));
+    if (typeof content !== 'string' || typeof title !== 'string') throw new Error('入力が不正です');
+    await updateKnowledgeController(knowledgeId, title, content, ctx.get('userId'));
   } catch {
     const page = await getKnowledgeDetailController(knowledgeId, ctx.get('userId'));
     return page ? ctx.html(page, 400) : ctx.notFound();
