@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { createKnowledgeController } from './controllers/create-knowledge.controller.js';
 import { deleteKnowledgeController } from './controllers/delete-knowledge.controller.js';
 import { getAllKnowledgesController, getKnowledgeDetailController } from './controllers/get-knowledges.controller.js';
+import { updateKnowledgeController } from './controllers/update-knowledge.controller.js';
 
 export interface Variables {
   userId: string;
@@ -41,6 +42,21 @@ router.post('/knowledges/:knowledgeId{[0-9a-f-]{36}}/delete', async (ctx) => {
   }
 
   return ctx.redirect('/', 303);
+});
+
+router.post('/knowledges/:knowledgeId{[0-9a-f-]{36}}/update', async (ctx) => {
+  const { knowledgeId } = ctx.req.param();
+  const { content } = await ctx.req.parseBody();
+
+  try {
+    if (typeof content !== 'string') throw new Error('本文が不正です');
+    await updateKnowledgeController(knowledgeId, content, ctx.get('userId'));
+  } catch {
+    const page = await getKnowledgeDetailController(knowledgeId, ctx.get('userId'));
+    return page ? ctx.html(page, 400) : ctx.notFound();
+  }
+
+  return ctx.redirect(`/knowledges/${knowledgeId}`, 303);
 });
 
 router.get('/knowledges/:knowledgeId{[0-9a-f-]{36}}', async (ctx) => {

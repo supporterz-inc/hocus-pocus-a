@@ -71,6 +71,8 @@ function create(content: Knowledge['content'], authorId: Knowledge['authorId']):
  * @returns 更新されたナレッジ
  */
 function update(self: Knowledge, content: Knowledge['content']): Knowledge {
+  assertValidContent(content);
+
   return {
     ...self,
     content,

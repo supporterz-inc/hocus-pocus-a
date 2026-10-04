@@ -41,6 +41,14 @@ export function KnowledgeListFeature({ userId, userName, knowledges }: ListProps
                 </a>
 
                 {knowledge.authorId === userId ? (
+                  <a
+                    class="px-3 py-1 rounded bg-green-600 text-white text-sm"
+                    href={`/knowledges/${knowledge.knowledgeId}`}
+                  >
+                    更新
+                  </a>
+                ) : null}
+                {knowledge.authorId === userId ? (
                   <form action={`/knowledges/${knowledge.knowledgeId}/delete`} method="post">
                     <button
                       class="px-3 py-1 rounded bg-red-500 text-white text-sm"
@@ -72,7 +80,7 @@ function formatDate(unixTime: number): string {
   return new Date(unixTime * 1000).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' });
 }
 
-export function KnowledgeDetailFeature({ knowledge }: DetailProps) {
+export function KnowledgeDetailFeature({ knowledge, userId }: DetailProps) {
   return (
     <Layout title="ナレッジ詳細">
       <a class="text-blue-600 underline" href="/">
@@ -90,7 +98,20 @@ export function KnowledgeDetailFeature({ knowledge }: DetailProps) {
         <dd>{formatDate(knowledge.updatedAt)}</dd>
       </dl>
 
-      <div class="whitespace-pre-wrap wrap-break-word border rounded p-2">{knowledge.content}</div>
+      <div class="whitespace-pre-wrap wrap-break-word border rounded p-2">
+        {knowledge.authorId === userId ? (
+          <form action={`/knowledges/${knowledge.knowledgeId}/update`} method="post">
+            <textarea class="w-full border rounded p-2" name="content" required rows={12}>
+              {knowledge.content}
+            </textarea>
+            <button class="mt-2 px-4 py-2 rounded bg-green-600 text-white" type="submit">
+              更新する
+            </button>
+          </form>
+        ) : (
+          <div class="whitespace-pre-wrap wrap-break-word border rounded p-2">{knowledge.content}</div>
+        )}
+      </div>
     </Layout>
   );
 }
