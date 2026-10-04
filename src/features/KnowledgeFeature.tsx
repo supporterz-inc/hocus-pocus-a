@@ -2,11 +2,12 @@ import type { Knowledge } from '../models/knowledge.model.js';
 import { Layout } from './Layout.js';
 
 interface ListProps {
+  userId: string;
   userName: string;
   knowledges: Knowledge[];
 }
 
-export function KnowledgeListFeature({ userName, knowledges }: ListProps) {
+export function KnowledgeListFeature({ userId, userName, knowledges }: ListProps) {
   return (
     <Layout title="ナレッジ一覧">
       <p>
@@ -27,17 +28,29 @@ export function KnowledgeListFeature({ userName, knowledges }: ListProps) {
       </form>
 
       {knowledges.length ? (
-        <ul>
+        <ul class="space-y-3">
           {knowledges
             .toSorted((a, b) => a.createdAt - b.createdAt)
             .map((knowledge) => (
-              <li class="flex gap-2 py-1" key={knowledge.knowledgeId}>
-                <a class="flex-1 truncate text-blue-600 underline" href={`/knowledges/${knowledge.knowledgeId}`}>
-                  {knowledge.knowledgeId}
-                </a>
-                <span class="text-sm text-gray-500">{formatDate(knowledge.createdAt)}</span>
-              </li>
-            ))}
+            <li class="flex items-center justify-between gap-2 border rounded p-3" key={knowledge.knowledgeId}>
+              <a class="flex-1 truncate text-blue-600 underline" href={`/knowledges/${knowledge.knowledgeId}`}>
+                {knowledge.content}
+              </a>
+              <span>{knowledge.knowledgeId}</span>
+
+              {knowledge.authorId === userId ? (
+                <form action={`/knowledges/${knowledge.knowledgeId}/delete`} method="post">
+                  <button
+                    class="px-3 py-1 rounded bg-red-500 text-white text-sm"
+                    onclick="return confirm('このナレッジを削除しますか？');"
+                    type="submit"
+                  >
+                    削除
+                  </button>
+                </form>
+              ) : null}
+            </li>
+          ))}
         </ul>
       ) : (
         <ul>
