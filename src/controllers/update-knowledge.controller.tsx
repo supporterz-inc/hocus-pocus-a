@@ -1,7 +1,7 @@
 import { Knowledge } from '../models/knowledge.model.js';
 import { KnowledgeRepository } from '../models/knowledge.repository.js';
 
-export async function updateKnowledgeController(knowledgeId: string, content: string, userId: string) {
+export async function updateKnowledgeController(knowledgeId: string, title: string, content: string, userId: string) {
   const knowledge = await KnowledgeRepository.getByKnowledgeId(knowledgeId);
   if (!knowledge) {
     throw new Error('ナレッジが見つかりません');
@@ -10,5 +10,5 @@ export async function updateKnowledgeController(knowledgeId: string, content: st
     throw new Error('自分が投稿したナレッジのみ更新できます');
   }
 
-  await KnowledgeRepository.upsert(Knowledge.update(knowledge, content));
+  await KnowledgeRepository.upsert(Knowledge.update(knowledge, title, content));
 }

@@ -1,9 +1,10 @@
-import { glob, readFile, rm, writeFile } from 'node:fs/promises';
+import { glob, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 
 import type { Knowledge } from './knowledge.model.js';
 
+// タイトル機能の追加前に保存されたナレッジには title が無いため、補って読み込む
 function readKnowledge(file: string): Promise<Knowledge> {
-  return readFile(file, 'utf-8').then(JSON.parse);
+  return readFile(file, 'utf-8').then((json) => ({ title: '(無題)', ...JSON.parse(json) }));
 }
 
 async function getAll(): Promise<Knowledge[]> {
@@ -18,6 +19,8 @@ async function getByKnowledgeId(knowledgeId: string): Promise<Knowledge | undefi
 }
 
 async function upsert(knowledge: Knowledge): Promise<void> {
+  // Docker Image には storage/ が含まれないため、無ければ作成する
+  await mkdir('./storage', { recursive: true });
   await writeFile(`./storage/${knowledge.knowledgeId}.json`, JSON.stringify(knowledge, null, 2), 'utf-8');
 }
 
