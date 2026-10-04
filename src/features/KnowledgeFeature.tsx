@@ -40,14 +40,14 @@ export function KnowledgeListFeature({ userId, userName, knowledges }: ListProps
                   {knowledge.content}
                 </a>
 
-                {knowledge.authorId === userId ? (
+                {knowledge.authorId === userId && (
                   <a
                     class="px-3 py-1 rounded bg-green-600 text-white text-sm"
                     href={`/knowledges/${knowledge.knowledgeId}`}
                   >
                     更新
                   </a>
-                ) : null}
+                )}
                 {knowledge.authorId === userId ? (
                   <form action={`/knowledges/${knowledge.knowledgeId}/delete`} method="post">
                     <button
@@ -99,7 +99,7 @@ export function KnowledgeDetailFeature({ knowledge, userId }: DetailProps) {
       </dl>
 
       <div class="whitespace-pre-wrap wrap-break-word border rounded p-2">
-        {knowledge.authorId === userId ? (
+        {knowledge.authorId === userId && (
           <form action={`/knowledges/${knowledge.knowledgeId}/update`} method="post">
             <textarea class="w-full border rounded p-2" name="content" required rows={12}>
               {knowledge.content}
@@ -108,8 +108,6 @@ export function KnowledgeDetailFeature({ knowledge, userId }: DetailProps) {
               更新する
             </button>
           </form>
-        ) : (
-          <div class="whitespace-pre-wrap wrap-break-word border rounded p-2">{knowledge.content}</div>
         )}
       </div>
     </Layout>

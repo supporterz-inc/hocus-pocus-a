@@ -7,7 +7,7 @@ export async function updateKnowledgeController(knowledgeId: string, content: st
     throw new Error('ナレッジが見つかりません');
   }
   if (knowledge.authorId !== userId) {
-    throw new Error('自分が投稿したナレッジのみ削除できます');
+    throw new Error('自分が投稿したナレッジのみ更新できます');
   }
 
   await KnowledgeRepository.upsert(Knowledge.update(knowledge, content));
