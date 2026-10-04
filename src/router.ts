@@ -15,7 +15,7 @@ router.get('/', (ctx) => {
   const userName = ctx.get('userName');
 
   console.log(`Signed-in : ${userName} (${userId})`);
-  return ctx.html(getAllKnowledgesController(userId,userName));
+  return ctx.html(getAllKnowledgesController(userId, userName));
 });
 
 router.post('/knowledges', async (ctx) => {
@@ -31,7 +31,7 @@ router.post('/knowledges', async (ctx) => {
   return ctx.redirect('/', 303);
 });
 
-router.post('/knowledges/:knowledgeId/delete', async (ctx) => {
+router.post('/knowledges/:knowledgeId/delete{[0-9a-f-]{36}}', async (ctx) => {
   const { knowledgeId } = ctx.req.param();
 
   try {

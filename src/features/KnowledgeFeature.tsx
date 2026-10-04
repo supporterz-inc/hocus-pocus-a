@@ -29,8 +29,13 @@ export function KnowledgeListFeature({ userId, userName, knowledges }: ListProps
 
       {knowledges.length ? (
         <ul class="space-y-3">
-          {knowledges.map((knowledge) => (
+          {knowledges
+            .toSorted((a, b) => a.createdAt - b.createdAt)
+            .map((knowledge) => (
             <li class="flex items-center justify-between gap-2 border rounded p-3" key={knowledge.knowledgeId}>
+              <a class="flex-1 truncate text-blue-600 underline" href={`/knowledges/${knowledge.knowledgeId}`}>
+                {knowledge.content}
+              </a>
               <span>{knowledge.knowledgeId}</span>
 
               {knowledge.authorId === userId ? (
