@@ -1,10 +1,10 @@
 import { KnowledgeDetailFeature, KnowledgeListFeature } from '../features/KnowledgeFeature.js';
 import { KnowledgeRepository } from '../models/knowledge.repository.js';
 
-export async function getAllKnowledgesController(userName: string) {
+export async function getAllKnowledgesController(userId: string, userName: string) {
   const knowledges = await KnowledgeRepository.getAll();
 
-  return <KnowledgeListFeature knowledges={knowledges} userName={userName} />;
+  return <KnowledgeListFeature knowledges={knowledges} userName={userName} userId={userId} />;
 }
 
 export async function getKnowledgeDetailController(knowledgeId: string) {

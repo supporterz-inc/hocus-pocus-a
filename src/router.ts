@@ -15,7 +15,7 @@ router.get('/', (ctx) => {
   const userName = ctx.get('userName');
 
   console.log(`Signed-in : ${userName} (${userId})`);
-  return ctx.html(getAllKnowledgesController(userName));
+  return ctx.html(getAllKnowledgesController(userId,userName));
 });
 
 router.post('/knowledges', async (ctx) => {
@@ -25,7 +25,7 @@ router.post('/knowledges', async (ctx) => {
     if (typeof content !== 'string') throw new Error('本文が不正です');
     await createKnowledgeController(content, ctx.get('userId'));
   } catch {
-    return ctx.html(getAllKnowledgesController(ctx.get('userName')), 400);
+    return ctx.html(getAllKnowledgesController(ctx.get('userId'), ctx.get('userName')), 400);
   }
 
   return ctx.redirect('/', 303);
@@ -37,7 +37,7 @@ router.post('/knowledges/:knowledgeId/delete', async (ctx) => {
   try {
     await deleteKnowledgeController(knowledgeId, ctx.get('userId'));
   } catch {
-    return ctx.html(getAllKnowledgesController(ctx.get('userName')), 403);
+    return ctx.html(getAllKnowledgesController(ctx.get('userId'), ctx.get('userName')), 403);
   }
 
   return ctx.redirect('/', 303);
