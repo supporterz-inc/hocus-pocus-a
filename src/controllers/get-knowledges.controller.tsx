@@ -7,8 +7,8 @@ export async function getAllKnowledgesController(userId: string, userName: strin
   return <KnowledgeListFeature knowledges={knowledges} userId={userId} userName={userName} />;
 }
 
-export async function getKnowledgeDetailController(knowledgeId: string) {
+export async function getKnowledgeDetailController(knowledgeId: string, userId: string) {
   const knowledge = await KnowledgeRepository.getByKnowledgeId(knowledgeId);
 
-  return knowledge && <KnowledgeDetailFeature knowledge={knowledge} />;
+  return knowledge && <KnowledgeDetailFeature knowledge={knowledge} userId={userId} />;
 }

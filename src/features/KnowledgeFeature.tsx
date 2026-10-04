@@ -32,25 +32,27 @@ export function KnowledgeListFeature({ userId, userName, knowledges }: ListProps
           {knowledges
             .toSorted((a, b) => a.createdAt - b.createdAt)
             .map((knowledge) => (
-            <li class="flex items-center justify-between gap-2 border rounded p-3" key={knowledge.knowledgeId}>
-              <a class="flex-1 truncate text-blue-600 underline" href={`/knowledges/${knowledge.knowledgeId}`}>
-                {knowledge.content}
-              </a>
-              <span>{knowledge.knowledgeId}</span>
+              <li class="flex items-center justify-between gap-2 border rounded p-3" key={knowledge.knowledgeId}>
+                <a
+                  class="min-w-0 flex-1 truncate text-blue-600 underline"
+                  href={`/knowledges/${knowledge.knowledgeId}`}
+                >
+                  {knowledge.content}
+                </a>
 
-              {knowledge.authorId === userId ? (
-                <form action={`/knowledges/${knowledge.knowledgeId}/delete`} method="post">
-                  <button
-                    class="px-3 py-1 rounded bg-red-500 text-white text-sm"
-                    onclick="return confirm('このナレッジを削除しますか？');"
-                    type="submit"
-                  >
-                    削除
-                  </button>
-                </form>
-              ) : null}
-            </li>
-          ))}
+                {knowledge.authorId === userId ? (
+                  <form action={`/knowledges/${knowledge.knowledgeId}/delete`} method="post">
+                    <button
+                      class="px-3 py-1 rounded bg-red-500 text-white text-sm"
+                      onclick="return confirm('このナレッジを削除しますか？');"
+                      type="submit"
+                    >
+                      削除
+                    </button>
+                  </form>
+                ) : null}
+              </li>
+            ))}
         </ul>
       ) : (
         <ul>
@@ -63,6 +65,7 @@ export function KnowledgeListFeature({ userId, userName, knowledges }: ListProps
 
 interface DetailProps {
   knowledge: Knowledge;
+  userId: string;
 }
 
 function formatDate(unixTime: number): string {
@@ -77,6 +80,8 @@ export function KnowledgeDetailFeature({ knowledge }: DetailProps) {
       </a>
 
       <dl class="my-4 text-sm text-gray-600">
+        <dt>ID</dt>
+        <dd class="font-mono text-gray-800">{knowledge.knowledgeId}</dd>
         <dt>作成者</dt>
         <dd>{knowledge.authorId}</dd>
         <dt>作成日時</dt>

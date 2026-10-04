@@ -31,7 +31,7 @@ router.post('/knowledges', async (ctx) => {
   return ctx.redirect('/', 303);
 });
 
-router.post('/knowledges/:knowledgeId/delete{[0-9a-f-]{36}}', async (ctx) => {
+router.post('/knowledges/:knowledgeId{[0-9a-f-]{36}}/delete', async (ctx) => {
   const { knowledgeId } = ctx.req.param();
 
   try {
@@ -44,7 +44,7 @@ router.post('/knowledges/:knowledgeId/delete{[0-9a-f-]{36}}', async (ctx) => {
 });
 
 router.get('/knowledges/:knowledgeId{[0-9a-f-]{36}}', async (ctx) => {
-  const page = await getKnowledgeDetailController(ctx.req.param('knowledgeId'));
+  const page = await getKnowledgeDetailController(ctx.req.param('knowledgeId'), ctx.get('userId'));
 
   return page ? ctx.html(page) : ctx.notFound();
 });
